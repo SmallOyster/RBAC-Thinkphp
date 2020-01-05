@@ -4,17 +4,17 @@
  * @package System/Setting
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-25
- * @version 2019-10-28
+ * @version 2020-01-03
  */
 ?>
 
 <!-- Vue main -->
-<div id="tabVue-{$tabId}">
+<div id="tabVue_{$tabId}">
 
 	<!-- Page main -->
-	<div id="panel{$tabId}" class="panel panel-default">
+	<div id="panel_{$tabId}" class="panel panel-default">
 		<div class="panel-body">
-			<table id="table{$tabId}" class="table table-striped table-bordered table-hover" style="border-radius: 5px; border-collapse: separate;">
+			<table id="table_{$tabId}" class="table table-striped table-bordered table-hover" style="border-radius: 5px; border-collapse: separate;">
 				<thead>
 					<tr>
 						<th>名称</th>
@@ -59,10 +59,10 @@
 </div><!-- /.Vue main -->
 
 <script>
-var table{$tabId};
+var table_{$tabId};
 
-var vm{$tabId} = new Vue({
-	el:'#tabVue-{$tabId}',
+var vm_{$tabId} = new Vue({
+	el:'#tabVue_{$tabId}',
 	data:{
 		name:"",
 		oldChineseName:"",
@@ -75,7 +75,7 @@ var vm{$tabId} = new Vue({
 			lockScreen();
 
 			$.ajax({
-				url:"{:URL('system/setting/getList')}",
+				url:"{:url('system/setting/getList')}",
 				dataType:'json',
 				error:function(e){
 					unlockScreen();
@@ -88,13 +88,13 @@ var vm{$tabId} = new Vue({
 						let list=ret.data['list'];
 
 						// 先清空表格
-						table{$tabId}.clear().draw();
+						table_{$tabId}.clear().draw();
 
 						for(i in list){							
 							let operateHtml=''
-							               +"<a onclick='vm{$tabId}.edit_ready("+'"'+list[i]['name']+'","'+list[i]['chinese_name']+'","'+list[i]['value']+'"'+")' class='btn btn-warning'>编辑</a>";
+							               +"<a onclick='vm_{$tabId}.edit_ready("+'"'+list[i]['name']+'","'+list[i]['chinese_name']+'","'+list[i]['value']+'"'+")' class='btn btn-warning'>编辑</a>";
 
-							table{$tabId}.row.add({
+							table_{$tabId}.row.add({
 								0: list[i]['chinese_name'],
 								1: list[i]['value'],
 								2: operateHtml
@@ -102,21 +102,21 @@ var vm{$tabId} = new Vue({
 						}
 
 						unlockScreen();
-						$("#panel{$tabId}").width($("#table{$tabId}").width()+30);
+						$("#panel_{$tabId}").width($("#table_{$tabId}").width()+30);
 					}
 				}
 			})
 		},
 		edit_ready:(name,chineseName,value)=>{
-			vm{$tabId}.oldChineseName=chineseName;
-			vm{$tabId}.oldValue=value;
-			vm{$tabId}.name=name;
-			vm{$tabId}.chineseName=chineseName;
-			vm{$tabId}.value=value;
+			vm_{$tabId}.oldChineseName=chineseName;
+			vm_{$tabId}.oldValue=value;
+			vm_{$tabId}.name=name;
+			vm_{$tabId}.chineseName=chineseName;
+			vm_{$tabId}.value=value;
 			$("#editModal").modal('show');
 		},
 		edit_sure:()=>{			
-			if(vm{$tabId}.chineseName==vm{$tabId}.oldChineseName && vm{$tabId}.value==vm{$tabId}.oldValue){
+			if(vm_{$tabId}.chineseName==vm_{$tabId}.oldChineseName && vm_{$tabId}.value==vm_{$tabId}.oldValue){
 				showModalTips("请编辑您所要修改的数据！");
 				return false;
 			}
@@ -125,7 +125,7 @@ var vm{$tabId} = new Vue({
 			$.ajax({
 				url:"{:URL('system/setting/save')}",
 				type:"post",
-				data:{"name":vm{$tabId}.name,"chineseName":vm{$tabId}.chineseName,"value":vm{$tabId}.value},
+				data:{"name":vm_{$tabId}.name,"chineseName":vm_{$tabId}.chineseName,"value":vm_{$tabId}.value},
 				dataType:'json',
 				error:function(e){
 					unlockScreen();
@@ -139,7 +139,7 @@ var vm{$tabId} = new Vue({
 					
 					if(ret.code==200){
 						alert("修改成功！");
-						vm{$tabId}.getList();
+						vm_{$tabId}.getList();
 						return true;
 					}else{
 						showModalTips("[修改失败]<br>"+ret.tips);
@@ -151,7 +151,7 @@ var vm{$tabId} = new Vue({
 		}
 	},
 	mounted:function(){
-		table{$tabId}=$('#table{$tabId}').DataTable({
+		table_{$tabId}=$('#table_{$tabId}').DataTable({
 			"pageLength": 25,
 			"order":[[0,'asc']],
 			"columnDefs":[{

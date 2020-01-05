@@ -6,14 +6,13 @@
 <link rel="stylesheet" href="https://cdn.bootcss.com/datatables/1.10.19/css/dataTables.bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.bootcss.com/zTree.v3/3.5.28/css/zTreeStyle/zTreeStyle.min.css">
 
-<link rel="stylesheet" href="https://ssouc.xshgzs.com/resource/css/skin-cyan.css">
+<link rel="stylesheet" href="https://id.xshgzs.com/resource/css/skin-cyan.css">
 <link rel="stylesheet" href="{:URL('/public/css/myStyle2.css')}">
-<link rel="stylesheet" href="https://static.xshgzs.com/css/select.css">
 
 <script src="https://cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
 <!-- 开发环境版本，包含了有帮助的命令行警告 -->
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="https://ssouc.xshgzs.com/resource/js/jquery-ui.min.js"></script>
+<script src="https://id.xshgzs.com/resource/js/jquery-ui.min.js"></script>
 <script>
 	$.widget.bridge('uibutton', $.ui.button);
 </script>
@@ -38,8 +37,7 @@
 
 <script src="https://static.xshgzs.com/js/dataTables.responsive.js"></script>
 <script src="https://static.xshgzs.com/js/utils.js"></script>
-<script src="https://static.xshgzs.com/js/select.js"></script>
-<script src="https://static.xshgzs.com/js/jwt.js"></script>
+<!--script src="https://static.xshgzs.com/js/jwt.js"></script-->
 
 <style>
 th{

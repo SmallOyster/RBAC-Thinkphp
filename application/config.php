@@ -16,8 +16,6 @@ return [
 
     // 应用调试模式
     'app_debug'              => true,
-    // 应用名称
-    'app_name'               => '生蚝科技RBAC框架(TP版)',
     // 应用Trace
     'app_trace'              => false,
     // 应用模式状态

@@ -3,7 +3,7 @@
  * @name 生蚝科技RBAC框架(TP)-V-登录
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-12-29
- * @version 2020-01-01
+ * @version 2020-01-03
  */
 ?>
 
@@ -13,7 +13,7 @@
 <head>
 	{include file="base/loadCssJs" /}
 
-	<title>登录 / {:config('app_name')}</title>
+	<title>登录 / {:config('custom.app_name')}</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	
 	<style>
@@ -29,7 +29,7 @@
 		<!--center><img src="" style="display: inline-block;height: auto;max-width: 100%;"></center><br-->
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title" style="text-align:center;line-height:23px;">欢迎登录<br>{:config('app_name')}</h3>
+				<h3 class="panel-title" style="text-align:center;line-height:23px;">欢迎登录<br>{:config('custom.app_name')}</h3>
 			</div>
 			<div class="panel-body">
 				<div class="form-group">
@@ -153,7 +153,7 @@ function toLogin(){
 	}
 	
 	$.ajax({
-		url:"{:url('index/user/toLogin')}",
+		url:"{:url('index/login/toLogin')}",
 		type:"post",
 		data:{"userName":userName,"password":password},
 		dataType:"json",
@@ -174,6 +174,7 @@ function toLogin(){
 			if(ret.code==200){
 				sessionStorage.setItem('allRoleInfo',ret.data['roleInfo']);
 
+				// 如果有重定向地址且base64有效
 				if(getURLParam("redirect")!=null){
 					try {
 						window.location.href=window.atob(getURLParam("redirect"));

@@ -7,7 +7,7 @@ use think\Session;
 function godie($type='',$message='',$tabId=''){
     if($type=='tab'){
         $script='<script>alert("'.$message.'\n请刷新主页面！");';
-        if($tabId!='') $script.='removeTab("'.$tabId.'");';
+        if($tabId!='') $script.='headerVm.removeTab("'.$tabId.'");';
         $script.='</script>';
     }else{
         $script='<script>alert("请您从正确途径访问系统哦~\n感谢您的配合！");history.go(-1);</script>';

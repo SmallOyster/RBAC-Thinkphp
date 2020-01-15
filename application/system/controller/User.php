@@ -4,17 +4,23 @@
  * @package System
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-27
- * @version 2020-01-05
+ * @version 2020-01-11
  */
 
 namespace app\system\controller;
 
 use app\common\controller\Safe;
 use think\Session;
-use think\Db;
 
 class User
-{	
+{
+	public function __construct()
+	{
+		$obj_Safe=new Safe();
+		$obj_Safe->checkLogin();
+	}
+	
+	
 	public function index()
 	{
 		checkTabloadToken(inputGet('tabloadToken'),inputGet('tabId',1));
@@ -26,10 +32,8 @@ class User
 	
 	public function getList()
 	{
-		$obj_Safe=new Safe();
-		$obj_Safe->checkLogin(1);
-		
-		$list=Db::table('user u')
+		$list=model('User')
+			->alias('u')
 			->field('u.*')
 			->field('GROUP_CONCAT(ur.role_id) AS role_id')
 			->join('user_role ur','ur.user_id = u.id','LEFT')
@@ -91,19 +95,19 @@ class User
 		if($operateSuccess>=1){
 			returnAjaxData(200,'success');
 		}else{
-			returnAjaxData(500,'Database error',[],'操作用户失败！');
+			returnAjaxData(500,'Database error',[],'操作用户失败');
 		}
 	}
 	
 	
 	public function delete()
 	{
-		$sensOprToken=inputPost('sensOprToken',0,1);
-		$userId=inputPost('userId',0,1);
+		checkSensOprToken(inputPost('sensOprToken',0,1));
 		
+		$userId=inputPost('userId',0,1);
 		$query=model('User')->delete([$userId]);
 		
 		if($query==1) returnAjaxData(200,'success');
-		else returnAjaxData(500,'Database error',[],'删除用户失败！');
+		else returnAjaxData(500,'Failed to delete user: Database error',[],'删除用户失败');
 	}
 }

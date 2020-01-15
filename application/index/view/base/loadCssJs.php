@@ -37,11 +37,37 @@
 
 <script src="https://static.xshgzs.com/js/dataTables.responsive.js"></script>
 <script src="https://static.xshgzs.com/js/utils.js"></script>
-<!--script src="https://static.xshgzs.com/js/jwt.js"></script-->
 
 <style>
 th{
 	text-align:center;
 	vertical-align:middle;
 }
+.modal {
+	overflow-y: auto;
+}
 </style>
+
+<script>
+function lockTabScreen(tabId,content=''){
+	$('#tabPanel-'+tabId).append(
+		'<div class="loadingwrap" id="loadingwrap_'+tabId+'"><div class="spinner"><div class="rect1"></div><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div><div class="rect5"></div><br><font style="color:yellow;font-size:24px;font-weight:bold;">' +
+		content + '</font></div></div>'
+	);
+
+	// 防止挡住tab导航栏
+	var topPx=15+$(".nav-tabs").height()+$(".main-header .navbar").height();
+	if(!isPhone()){
+		topPx=topPx;
+	}else{
+		topPx=topPx+$(".logo-lg").height();
+	}
+
+	$("#loadingwrap_"+tabId).attr('style','top:'+topPx+'px;');
+}
+
+
+function unlockTabScreen(tabId){
+	$("#loadingwrap_"+tabId).remove();
+}
+</script>

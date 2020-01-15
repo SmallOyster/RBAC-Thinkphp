@@ -3,7 +3,7 @@
  * @name 生蚝科技RBAC框架(TP)-V-主框架
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-20
- * @version 2020-01-03
+ * @version 2020-01-11
  */
 ?>
 
@@ -15,11 +15,6 @@
 	<title>{:config('custom.app_name')}</title>
 
 	{include file="base/loadCssJs" /}
-	<style>
-		.modal {
-			overflow-y: auto;
-		}
-	</style>
 </head>
 
 <body class="hold-transition skin-cyan sidebar-mini">
@@ -234,15 +229,15 @@ headerVm.getMenuTree();
 <!-- ./Page -->
 </div>
 
-<div class="modal fade" id="tipsModal" z-index="99999">
+<div class="modal fade" id="tipsModal" style="z-index:99999">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span class="sr-only">Close</span></button>
-				<h3 class="modal-title" id="ModalTitle">温馨提示</h3>
+				<h3 class="modal-title" id="tipsTitle">温馨提示</h3>
 			</div>
 			<div class="modal-body">
-				<font color="red" style="font-weight:bold;font-size:24px;text-align:center;">
+				<font color="#fb7312" style="font-weight:bold;font-size:24px;text-align:center;">
 					<p id="tips"></p>
 				</font>
 			</div>

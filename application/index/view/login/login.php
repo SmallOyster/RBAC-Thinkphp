@@ -3,7 +3,7 @@
  * @name 生蚝科技RBAC框架(TP)-V-登录
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-12-29
- * @version 2020-01-03
+ * @version 2020-01-06
  */
 ?>
 
@@ -50,12 +50,7 @@
 				<center>
 					<a class="btn btn-primary" style="width:49%" href='register'>注册 / Register</a>
 					<button class="btn btn-success" style="width:49%" onclick='toLogin();'>登录 / Login &gt;</button>
-					<br><br>
-					<a href="" class="btn" style="color:white;background-color:#FF60AF;width:99%;font-size:17px;font-weight:bold;"><i class="fa fa-star" aria-hidden="true"></i> 统一身份认证平台 快速登录 &gt;</a>
 				</center>
-			</div>
-			<div class="panel-footer" style="text-align: center;">
-				<span style="color: #56baed;line-height:28px;">本系统已整合 生蚝科技统一身份认证<br>单点登录服务由 <a href="https://www.xshgzs.com?from=tp_rbac" target="_blank">生蚝科技</a> 提供</span>
 			</div>
 		</div>
 	</div>

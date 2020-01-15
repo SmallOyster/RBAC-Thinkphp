@@ -4,7 +4,7 @@
  * @package System/User
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-27
- * @version 2020-01-05
+ * @version 2020-01-15
  */
 ?>
 
@@ -38,14 +38,14 @@
 				<div class="modal-body">
 					<div class="form-group">
 						<label for="userName">用户名</label>
-						<input class="form-control" id="userName" v-model="userName" onkeyup='vm.checkDuplicate("user_name",this.value);if(event.keyCode==13){$("#nickName").focus();}'>
+						<input class="form-control" id="userName" v-model="operateInputData.userName" onkeyup='vm.checkDuplicate("user_name",this.value);if(event.keyCode==13){$("#nickName").focus();}'>
 						<p class="help-block">请输入<font color="green">4</font>-<font color="green">20</font>字的用户名</p>
 						<p class="help-block" id="user_name_duplicateTips" style="display:none;color:red;font-weight: bold;font-size:16px">当前已存在此用户名，请修改！</p>
 					</div>
 					<br>
 					<div class="form-group">
 						<label for="nickName">昵称</label>
-						<input class="form-control" id="nickName" v-model="nickName" onkeyup='if(event.keyCode==13){$("#phone").focus();}'>
+						<input class="form-control" id="nickName" v-model="operateInputData.nickName" onkeyup='if(event.keyCode==13){$("#phone").focus();}'>
 					</div>
 					<br>
 					<div class="form-group">
@@ -55,19 +55,19 @@
 					<br>
 					<div class="form-group">
 						<label for="phone">手机号</label>
-						<input type="number" class="form-control" id="phone" v-model="phone" onkeyup='if(this.value.length==11){vm.checkDuplicate("phone",this.value);}if(event.keyCode==13){$("#email").focus();}'>
+						<input type="number" class="form-control" id="phone" v-model="operateInputData.phone" onkeyup='if(this.value.length==11){vm.checkDuplicate("phone",this.value);}if(event.keyCode==13){$("#email").focus();}'>
 						<p class="help-block">目前仅支持中国大陆的手机号码</p>
 						<p class="help-block" id="phone_duplicateTips" style="display:none;color:red;font-weight: bold;font-size:16px">当前已存在此手机号，请修改！</p>
 					</div>
 					<br>
 					<div class="form-group">
 						<label for="email">邮箱</label>
-						<input type="email" class="form-control" id="email" v-model="email" onkeyup='if(this.value.indexOf("@")!=-1){vm.checkDuplicate("email",this.value);}if(event.keyCode==13){$("#ssoUnionId").focus();}'>
+						<input type="email" class="form-control" id="email" v-model="operateInputData.email" onkeyup='if(this.value.indexOf("@")!=-1){vm.checkDuplicate("email",this.value);}if(event.keyCode==13){$("#ssoUnionId").focus();}'>
 						<p class="help-block" id="email_duplicateTips" style="display:none;color:red;font-weight: bold;font-size:16px">当前已存在此邮箱，请修改！</p>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-warning" onclick="vm_{$tabId}.userName='';vm_{$tabId}.nickName='';vm_{$tabId}.phone='';vm_{$tabId}.email='';vm_{$tabId}.operateType=-1;vm_{$tabId}.operateUserId=0;$('#operateModal').modal('hide');">&lt; 返回</button> <button id="submitBtn" class="btn btn-success" @click='operateSure'>{{operateModalBtn}}</button>
+					<button class="btn btn-warning" onclick="vm_{$tabId}.operateInputData={};vm_{$tabId}.operateType=-1;vm_{$tabId}.operateUserId=0;$('#operateModal').modal('hide');">&lt; 返回</button> <button id="submitBtn" class="btn btn-success" @click='operateSure'>{{operateModalBtn}}</button>
 				</div>
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
@@ -93,10 +93,10 @@ var vm_{$tabId} = new Vue({
 		statusNum:1,
 		resetId:0,
 		deleteId:0,
-		userName:'',nickName:'',phone:'',email:'',
 		operateType:0,
 		operateUserId:0,
 		operateUserRoleIds:[],
+		operateInputData:{},
 		operateOriginData:[],
 		operateModalTitle:'',
 		operateModalBtn:'',
@@ -109,13 +109,13 @@ var vm_{$tabId} = new Vue({
 	},
 	methods:{
 		getList:()=>{
-			lockScreen();
+			lockTabScreen('{$tabId}');
 
 			$.ajax({
 				url:"{:url('system/user/getList')}",
 				dataType:'json',
 				error:function(e){
-					unlockScreen();
+					unlockTabScreen();
 					showModalTips("服务器错误！"+e.status);
 					console.log(JSON.stringify(e));
 					return false;
@@ -129,7 +129,7 @@ var vm_{$tabId} = new Vue({
 
 						for(i in list){							
 							let operateHtml=''
-							               +'<a onclick="vm_{$tabId}.operateReady(2,'+"'"+list[i]['id']+"','"+list[i]['user_name']+"','"+list[i]['nick_name']+"','"+list[i]['phone']+"','"+list[i]['email']+"','"+list[i]['sso_union_id']+"','"+list[i]['role_id']+"'"+');" class="btn btn-primary">编辑</a> '
+							               +'<a onclick="vm_{$tabId}.operateReady(2,'+"'"+list[i]['id']+"','"+list[i]['user_name']+"','"+list[i]['nick_name']+"','"+list[i]['phone']+"','"+list[i]['email']+"','"+list[i]['role_id']+"'"+');" class="btn btn-primary">编辑</a> '
 							               +"<a onclick='vm_{$tabId}.resetPwd_ready("+'"'+list[i]['id']+'","'+list[i]['nick_name']+'"'+")' class='btn btn-warning'>重置密码</a> "
 							               +"<a onclick='vm_{$tabId}.del_ready("+'"'+list[i]['id']+'","'+list[i]['nick_name']+'"'+")' class='btn btn-danger'>删除</a>";
 
@@ -142,20 +142,28 @@ var vm_{$tabId} = new Vue({
 							}).draw();
 						}
 
-						unlockScreen();
+						unlockTabScreen('{$tabId}');
 						$("#panel_{$tabId}").width($("#table_{$tabId}").width()+30);
 					}
 				}
 			})
 		},
-		operateReady:(type=1,userId=0,userName='',nickName='',phone='',email='',ssoUnionId='',roleIds='')=>{
+		operateReady:(type=1,userId=0,userName='',nickName='',phone='',email='',roleIds='')=>{
 			vm_{$tabId}.operateType=type;
 			vm_{$tabId}.operateUserId=userId;
-			vm_{$tabId}.userName=userName;
-			vm_{$tabId}.nickName=nickName;
-			vm_{$tabId}.phone=phone;
-			vm_{$tabId}.email=email;
-			vm_{$tabId}.operateOriginData=[userName,nickName,phone,email,ssoUnionId,roleIds];
+			vm_{$tabId}.operateInputData={
+				userName:userName,
+				nickName:nickName,
+				phone:phone,
+				email:email
+			};
+			vm_{$tabId}.operateOriginData={
+				userName:userName,
+				nickName:nickName,
+				phone:phone,
+				email:email,
+				roleIds:roleIds
+			};
 			
 			if(type==1){
 				vm_{$tabId}.operateModalTitle="新 增 用 户";
@@ -169,33 +177,28 @@ var vm_{$tabId} = new Vue({
 			$("#operateModal").modal("show");
 		},
 		operateSure:function(){
-			lockScreen();
-
 			let userData={};
 			let roleIds=this.checkedRoleList;
 			let type=this.operateType;
 
 			// 检查是否有修改数据
-			if(vm_{$tabId}.userName!==vm_{$tabId}.operateOriginData[0]) userData.user_name=vm_{$tabId}.userName;
-			if(vm_{$tabId}.nickName!==vm_{$tabId}.operateOriginData[1]) userData.nick_name=vm_{$tabId}.nickName;
-			if(vm_{$tabId}.phone!==vm_{$tabId}.operateOriginData[2]) userData.phone=vm_{$tabId}.phone;
-			if(vm_{$tabId}.email!==vm_{$tabId}.operateOriginData[3]) userData.email=vm_{$tabId}.email;
-			if(vm_{$tabId}.ssoUnionId!==vm_{$tabId}.operateOriginData[4]) userData.sso_union_id=vm_{$tabId}.ssoUnionId;
-			if(roleIds!==vm_{$tabId}.operateOriginData[5]) userData.role_id=roleIds.split(",");
+			if(vm_{$tabId}.operateInputData.userName!==vm_{$tabId}.operateOriginData.userName) userData.user_name=vm_{$tabId}.operateInputData.userName;
+			if(vm_{$tabId}.operateInputData.nickName!==vm_{$tabId}.operateOriginData.nickName) userData.nick_name=vm_{$tabId}.operateInputData.nickName;
+			if(vm_{$tabId}.operateInputData.phone!==vm_{$tabId}.operateOriginData.phone) userData.phone=vm_{$tabId}.operateInputData.phone;
+			if(vm_{$tabId}.operateInputData.email!==vm_{$tabId}.operateOriginData.email) userData.email=vm_{$tabId}.operateInputData.email;
+			if(roleIds.join(',')!==vm_{$tabId}.operateOriginData.roleIds) userData.role_id=roleIds;
 			
 			if($.isEmptyObject(userData)==true){
-				unlockScreen();
 				showModalTips('请填写需要操作的数据！');
-				vm_{$tabId}.userName='';
-				vm_{$tabId}.nickName='';
-				vm_{$tabId}.phone='';
-				vm_{$tabId}.email='';
+				vm_{$tabId}.operateInputData={};
 				vm_{$tabId}.operateType=-1;
 				vm_{$tabId}.operateUserId=0;
 				$('#operateModal').modal('hide');
-				return;
+				return false;
 			}
 			
+			lockTabScreen('{$tabId}');
+
 			$.ajax({
 				url:"{:url('system/user/toOperate')}",
 				type:'post',
@@ -203,38 +206,33 @@ var vm_{$tabId} = new Vue({
 				dataType:"json",
 				error:function(e){
 					console.log(e);
-					unlockScreen();
+					unlockTabScreen('{$tabId}');
 					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 					return false;
 				},
 				success:ret=>{
 					$("#operateModal").modal('hide');
-					unlockScreen();
+					unlockTabScreen('{$tabId}');
 
 					if(ret.code==200){
-						alert("操作成功！");
+						showModalTips("操作成功！");
 						vm_{$tabId}.getList();
 
+						// 操作类型为新增，显示用户基本资料及初始密码
 						if(type==1){
-							$("#info_userName_show").html(vm_{$tabId}.userName);
-							$("#info_nickName_show").html(vm_{$tabId}.nickName);
+							$("#info_userName_show").html(vm_{$tabId}.operateInputData.userName);
+							$("#info_nickName_show").html(vm_{$tabId}.operateInputData.nickName);
 							$("#info_originPwd_show").html(ret.data['originPassword']);
 							$("#infoModal").modal('show');
 						}
 						
-						return;
-					}else if(ret.code==4001){
-						showModalTips("数据包含非法字段！<hr>请联系技术支持<br>并提交以下错误码：AU4001-"+ret.data);
-						return;
-					}else if(ret.code==4002){
-						showModalTips("数据包含空值！<hr>请联系技术支持<br>并提交以下错误码：AU4002-"+ret.data);
-						return;
-					}else if(ret.code==500){
-						showModalTips("数据库错误！<br>请联系技术支持！");
-						return;
+						return true;
+					}else if(ret.tips!=""){
+						showModalTips(ret.tips);
+						return false;
 					}else{
-						showModalTips("系统错误！<br>请联系技术支持！");
-						return;
+						showModalTips("系统错误！<br>请联系技术支持！<hr>错误码："+ret.code);
+						return false;
 					}
 				}
 			})
@@ -244,50 +242,42 @@ var vm_{$tabId} = new Vue({
 			$("#delName_show").html(name);
 			$("#delModal").modal('show');
 		},
-		del_sure:()=>{
-			lockScreen();
+		del_sure:function(){
+			lockTabScreen('{$tabId}');
 			
+			let that=this;
 			$.ajax({
 				url:"{:url('delete')}",
 				type:"post",
 				dataType:"json",
-				data:{"sensOprToken":vm_{$tabId}.sensOprToken,"userId":vm_{$tabId}.deleteId},
+				data:{"sensOprToken":this.sensOprToken,"userId":this.deleteId},
 				error:function(e){
 					console.log(e);
-					unlockScreen();
+					unlockTabScreen('{$tabId}');
 					$("#delModal").modal('hide');
 					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 					return false;
 				},
 				success:function(ret){
-					unlockScreen();
+					unlockTabScreen('{$tabId}');
 					$("#delModal").modal('hide');
 
 					if(ret.code==200){
-						alert("删除成功！");
+						showModalTips("操作成功！");
 						vm_{$tabId}.getList();
 						return true;
-					}else if(ret.code==400){
-						showModalTips("禁止操作当前用户！");
-						return false;
-					}else if(ret.code==500){
-						showModalTips("删除失败！！！");
-						return false;
-					}else if(ret.code==0){
-						showModalTips("参数缺失！<hr>请从正确途径访问本功能！");
-						return false;
-					}else if(ret.code==403002){
-						showModalTips("当前用户无操作权限！<br>请联系管理员！");
+					}else if(ret.tips!=""){
+						showModalTips(ret.tips);
 						return false;
 					}else{
-						showModalTips("系统错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+ret.code+"</font>");
+						showModalTips("系统错误！<br>请联系技术支持！<hr>错误码："+ret.code);
 						return false;
 					}
 				}
 			});
 		},
 		getAllRole:function(roleIds=[]){
-			lockScreen();
+			lockTabScreen('{$tabId}');
 
 			// 是否已经获取过所有角色
 			if(JSON.stringify(vm_{$tabId}.roleList)=="{}"){
@@ -296,12 +286,12 @@ var vm_{$tabId} = new Vue({
 					dataType:'json',
 					error:function(e){
 						console.log(JSON.stringify(e));
-						unlockScreen();
+						unlockTabScreen('{$tabId}');
 						showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 						return false;
 					},
 					success:function(ret){
-						unlockScreen();
+						unlockTabScreen('{$tabId}');
 
 						if(ret.code==200){
 							let list=[];
@@ -338,7 +328,7 @@ var vm_{$tabId} = new Vue({
 
 				// 去重
 				vm_{$tabId}.operateUserRoleIds=list.filter((item, index, self) => self.indexOf(item) === index)
-				unlockScreen();
+				unlockTabScreen('{$tabId}');
 			}
 		},
 		checkDuplicate:function(field='',value=''){
@@ -348,7 +338,7 @@ var vm_{$tabId} = new Vue({
 				dataType:'json',
 				error:function(e){
 					console.log(e);
-					unlockScreen();
+					unlockTabScreen('{$tabId}');
 					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 					return false;
 				},

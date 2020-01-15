@@ -4,16 +4,23 @@
  * @package System
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-11-01
- * @version 2019-12-28
+ * @version 2020-01-11
  */
 
 namespace app\system\controller;
 
 use app\common\controller\Safe;
-use think\Db;
+use think\Session;
 
 class Menu
 {	
+	public function __construct()
+	{
+		$obj_Safe=new Safe();
+		$obj_Safe->checkLogin();
+	}
+	
+	
 	public function index()
 	{
 		checkTabloadToken(inputGet('tabloadToken'),inputGet('tabId',1));
@@ -23,8 +30,6 @@ class Menu
 	
 	public function getList()
 	{
-		Safe::checkLogin(1);
-		
 		$list=model('Menu')->select();
 		
 		returnAjaxData(200,'success',['list'=>$list]);
@@ -64,9 +69,9 @@ class Menu
 		}
 
 		if($query==1){
-			returnAjaxData(200,"success");
+			returnAjaxData(200,'success');
 		}else{
-			returnAjaxData(500,"Failed to operate");
+			returnAjaxData(500,'Failed to operate',[],'操作系统菜单失败');
 		}
 	}
 }

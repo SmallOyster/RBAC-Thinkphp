@@ -4,16 +4,23 @@
  * @package System
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-11-02
- * @version 2019-11-02
+ * @version 2020-01-11
  */
 
 namespace app\system\controller;
 
 use app\common\controller\Safe;
-use think\Db;
+use think\Session;
 
 class Role
 {	
+	public function __construct()
+	{
+		$obj_Safe=new Safe();
+		$obj_Safe->checkLogin();
+	}
+	
+	
 	public function index()
 	{
 		checkTabloadToken(inputGet('tabloadToken'),inputGet('tabId',1));
@@ -23,23 +30,42 @@ class Role
 	
 	public function getList()
 	{
-		//Safe::checkLogin(1);
-		
-		$list=model('Menu')->select();
+		$list=model('Role')->select();
 		
 		returnAjaxData(200,'success',['list'=>$list]);
 	}
 	
+	
 	public function operate()
 	{
 		$type=inputPost('type',0,1);
-		$userId=inputPost('userId',0,1);
-		$userData=inputPost('userData',0,1);
+		$roleId=inputPost('roleId',0,1);
+		$roleData=inputPost('roleData',0,1);
 		
-		$query=Db::name('user')->where('id',$userId)
-			->update($userData);
+		if($type==2){
+			$query=model('Role')
+				->allowField(true)
+				->save($roleData,['id'=>$roleId]);
+		}elseif($type==1){
+			$roleData['id']=makeUUID();
+			$query=model('Role')
+				->allowField(true)
+				->save($roleData);
+		}
 			
 			if($query==1) returnAjaxData(200,'success');
-			else returnAjaxData(500,'Database error',[],'配置已被删除或为无效的值！');
+			else returnAjaxData(500,'Database error',[],'操作角色失败');
+	}
+	
+	
+	public function delete()
+	{
+		$sensOprToken=inputPost('sensOprToken',0,1);
+		
+		$roleId=inputPost('roleId',0,1);
+		$query=model('Role')->delete([$roleId]);
+		
+		if($query==1) returnAjaxData(200,'success');
+		else returnAjaxData(500,'Failed to delete role: Database error',[],'删除角色失败');
 	}
 }

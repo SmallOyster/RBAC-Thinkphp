@@ -4,7 +4,7 @@
  * @package Index
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-27
- * @version 2020-01-02
+ * @version 2020-01-15
  */
 
 namespace app\index\controller;
@@ -14,9 +14,9 @@ use app\api\controller\User as ApiUser;
 
 class User
 {
-	public function editProfile()
+	public function profile()
 	{
-		checkTabloadToken(inputGet('tabloadToken'),inputGet('tabId',1));
-		return view('editProfile');
+		checkTabloadToken(inputGet('tabloadToken'),inputGet('tabId'));
+		return view('profile',['tabId'=>inputGet('tabId')]);
 	}
 }

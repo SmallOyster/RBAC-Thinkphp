@@ -8,9 +8,9 @@
 
 ▲ 开发商：生蚝科技
 
-▲ 代码版本信息：***Build 00021***
+▲ 代码版本信息：***Build 00037***
 
-▲ 系统版本信息：***V0.0.0***
+▲ 系统版本信息：***V1.0.0***
 
 ▲ LICENSE：***GNU GPLv3***
 
@@ -45,8 +45,6 @@
 ---
 
 ## 鸣谢（排名不分先后） Thanks
-
-* [`@OysterTech`](https://github.com/OysterTech) 自家提供的[`单点登录统一身份认证平台`](https://github.com/OysterTech/OT-SSO)，遵循`GNU GPLv3`协议
 
 * [`@OysterTech`](https://github.com/OysterTech) 自家提供的[`静态资源中心`](https://static.xshgzs.com)
 

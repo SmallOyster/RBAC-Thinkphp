@@ -4,7 +4,7 @@
  * @package System/Setting
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-25
- * @version 2020-01-03
+ * @version 2020-01-15
  */
 ?>
 
@@ -72,13 +72,13 @@ var vm_{$tabId} = new Vue({
 	},
 	methods:{
 		getList:()=>{
-			lockScreen();
+			lockTabScreen('{$tabId}');
 
 			$.ajax({
 				url:"{:url('system/setting/getList')}",
 				dataType:'json',
 				error:function(e){
-					unlockScreen();
+					unlockTabScreen('{$tabId}');
 					showModalTips("服务器错误！"+e.status);
 					console.log(JSON.stringify(e));
 					return false;
@@ -101,7 +101,7 @@ var vm_{$tabId} = new Vue({
 							}).draw();
 						}
 
-						unlockScreen();
+						unlockTabScreen('{$tabId}');
 						$("#panel_{$tabId}").width($("#table_{$tabId}").width()+30);
 					}
 				}
@@ -121,20 +121,20 @@ var vm_{$tabId} = new Vue({
 				return false;
 			}
 			
-			lockScreen();
+			lockTabScreen('{$tabId}');
 			$.ajax({
 				url:"{:URL('system/setting/save')}",
 				type:"post",
 				data:{"name":vm_{$tabId}.name,"chineseName":vm_{$tabId}.chineseName,"value":vm_{$tabId}.value},
 				dataType:'json',
 				error:function(e){
-					unlockScreen();
+					unlockTabScreen('{$tabId}');
 					showModalTips("服务器错误！"+e.status);
 					console.log(JSON.stringify(e));
 					return false;
 				},
 				success:ret=>{
-					unlockScreen();
+					unlockTabScreen('{$tabId}');
 					$("#editModal").modal("hide");
 					
 					if(ret.code==200){

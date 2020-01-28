@@ -4,17 +4,17 @@
  * @package System/Setting
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-25
- * @version 2020-01-15
+ * @version 2020-01-28
  */
 ?>
 
 <!-- Vue main -->
-<div id="tabVue_{$tabId}">
+<div id="tabVue_SystemSetting">
 
 	<!-- Page main -->
-	<div id="panel_{$tabId}" class="panel panel-default">
+	<div id="panel_SystemSetting" class="panel panel-default">
 		<div class="panel-body">
-			<table id="table_{$tabId}" class="table table-striped table-bordered table-hover" style="border-radius: 5px; border-collapse: separate;">
+			<table id="table_SystemSetting" class="table table-striped table-bordered table-hover" style="border-radius: 5px; border-collapse: separate;">
 				<thead>
 					<tr>
 						<th>名称</th>
@@ -27,7 +27,7 @@
 		</div>
 	</div><!-- /.Page main -->
 
-	<div class="modal fade" id="editModal" data-backdrop="static" data-keyboard="false">
+	<div class="modal fade" id="editModal_SystemSetting" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -50,7 +50,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-primary" onclick="$('#editModal').modal('hide');">&lt; 返回</button> <button class="btn btn-warning" @click='edit_sure'>确认编辑 &gt;</button>
+					<button class="btn btn-primary" onclick="$('#editModal_SystemSetting').modal('hide');">&lt; 返回</button> <button class="btn btn-warning" @click='edit_sure'>确认编辑 &gt;</button>
 				</div>
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
@@ -59,10 +59,10 @@
 </div><!-- /.Vue main -->
 
 <script>
-var table_{$tabId};
+var table_SystemSetting;
 
-var vm_{$tabId} = new Vue({
-	el:'#tabVue_{$tabId}',
+var vm_SystemSetting = new Vue({
+	el:'#tabVue_SystemSetting',
 	data:{
 		name:"",
 		oldChineseName:"",
@@ -72,13 +72,13 @@ var vm_{$tabId} = new Vue({
 	},
 	methods:{
 		getList:()=>{
-			lockTabScreen('{$tabId}');
+			lockTabScreen('SystemSetting');
 
 			$.ajax({
 				url:"{:url('system/setting/getList')}",
 				dataType:'json',
 				error:function(e){
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemSetting');
 					showModalTips("服务器错误！"+e.status);
 					console.log(JSON.stringify(e));
 					return false;
@@ -88,58 +88,58 @@ var vm_{$tabId} = new Vue({
 						let list=ret.data['list'];
 
 						// 先清空表格
-						table_{$tabId}.clear().draw();
+						table_SystemSetting.clear().draw();
 
 						for(i in list){							
 							let operateHtml=''
-							               +"<a onclick='vm_{$tabId}.edit_ready("+'"'+list[i]['name']+'","'+list[i]['chinese_name']+'","'+list[i]['value']+'"'+")' class='btn btn-warning'>编辑</a>";
+							               +"<a onclick='vm_SystemSetting.edit_ready("+'"'+list[i]['name']+'","'+list[i]['chinese_name']+'","'+list[i]['value']+'"'+")' class='btn btn-warning'>编辑</a>";
 
-							table_{$tabId}.row.add({
+							table_SystemSetting.row.add({
 								0: list[i]['chinese_name'],
 								1: list[i]['value'],
 								2: operateHtml
 							}).draw();
 						}
 
-						unlockTabScreen('{$tabId}');
-						$("#panel_{$tabId}").width($("#table_{$tabId}").width()+30);
+						unlockTabScreen('SystemSetting');
+						$("#panel_SystemSetting").width($("#table_SystemSetting").width()+30);
 					}
 				}
 			})
 		},
 		edit_ready:(name,chineseName,value)=>{
-			vm_{$tabId}.oldChineseName=chineseName;
-			vm_{$tabId}.oldValue=value;
-			vm_{$tabId}.name=name;
-			vm_{$tabId}.chineseName=chineseName;
-			vm_{$tabId}.value=value;
-			$("#editModal").modal('show');
+			vm_SystemSetting.oldChineseName=chineseName;
+			vm_SystemSetting.oldValue=value;
+			vm_SystemSetting.name=name;
+			vm_SystemSetting.chineseName=chineseName;
+			vm_SystemSetting.value=value;
+			$("#editModal_SystemSetting").modal('show');
 		},
 		edit_sure:()=>{			
-			if(vm_{$tabId}.chineseName==vm_{$tabId}.oldChineseName && vm_{$tabId}.value==vm_{$tabId}.oldValue){
+			if(vm_SystemSetting.chineseName==vm_SystemSetting.oldChineseName && vm_SystemSetting.value==vm_SystemSetting.oldValue){
 				showModalTips("请编辑您所要修改的数据！");
 				return false;
 			}
 			
-			lockTabScreen('{$tabId}');
+			lockTabScreen('SystemSetting');
 			$.ajax({
 				url:"{:URL('system/setting/save')}",
 				type:"post",
-				data:{"name":vm_{$tabId}.name,"chineseName":vm_{$tabId}.chineseName,"value":vm_{$tabId}.value},
+				data:{"name":vm_SystemSetting.name,"chineseName":vm_SystemSetting.chineseName,"value":vm_SystemSetting.value},
 				dataType:'json',
 				error:function(e){
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemSetting');
 					showModalTips("服务器错误！"+e.status);
 					console.log(JSON.stringify(e));
 					return false;
 				},
 				success:ret=>{
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemSetting');
 					$("#editModal").modal("hide");
 					
 					if(ret.code==200){
 						alert("修改成功！");
-						vm_{$tabId}.getList();
+						vm_SystemSetting.getList();
 						return true;
 					}else{
 						showModalTips("[修改失败]<br>"+ret.tips);
@@ -151,7 +151,7 @@ var vm_{$tabId} = new Vue({
 		}
 	},
 	mounted:function(){
-		table_{$tabId}=$('#table_{$tabId}').DataTable({
+		table_SystemSetting=$('#table_SystemSetting').DataTable({
 			"pageLength": 25,
 			"order":[[0,'asc']],
 			"columnDefs":[{

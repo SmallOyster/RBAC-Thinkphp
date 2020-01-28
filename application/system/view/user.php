@@ -4,16 +4,16 @@
  * @package System/User
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-27
- * @version 2020-01-15
+ * @version 2020-01-28
  */
 ?>
 
 <!-- Vue main -->
-<div id="tabVue_{$tabId}">
+<div id="tabVue_SystemUserManage">
 	<!-- Page main -->
-	<div id="panel_{$tabId}" class="panel panel-default">
+	<div id="panel_SystemUserManage" class="panel panel-default">
 		<div class="panel-body">
-			<table id="table_{$tabId}" class="table table-striped table-bordered table-hover" style="border-radius: 5px; border-collapse: separate;">
+			<table id="table_SystemUserManage" class="table table-striped table-bordered table-hover" style="border-radius: 5px; border-collapse: separate;">
 				<thead>
 					<tr>
 						<th>用户名</th>
@@ -28,7 +28,7 @@
 		</div>
 	</div><!-- /.Page main -->
 
-	<div class="modal fade" id="operateModal" data-backdrop="static" data-keyboard="false">
+	<div class="modal fade" id="operateModal_SystemUserManage" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -67,7 +67,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-warning" onclick="vm_{$tabId}.operateInputData={};vm_{$tabId}.operateType=-1;vm_{$tabId}.operateUserId=0;$('#operateModal').modal('hide');">&lt; 返回</button> <button id="submitBtn" class="btn btn-success" @click='operateSure'>{{operateModalBtn}}</button>
+					<button class="btn btn-warning" onclick="vm_SystemUserManage.operateInputData={};vm_SystemUserManage.operateType=-1;vm_SystemUserManage.operateUserId=0;$('#operateModal_SystemUserManage').modal('hide');">&lt; 返回</button> <button id="submitBtn" class="btn btn-success" @click='operateSure'>{{operateModalBtn}}</button>
 				</div>
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
@@ -83,10 +83,10 @@
 </div><!-- /.Vue main -->
 
 <script>
-var table_{$tabId};
+var table_SystemUserManage;
 
-var vm_{$tabId} = new Vue({
-	el:'#tabVue_{$tabId}',
+var vm_SystemUserManage = new Vue({
+	el:'#tabVue_SystemUserManage',
 	data:{
 		sensOprToken:"{$sensOprToken}",
 		updateId:0,
@@ -109,7 +109,7 @@ var vm_{$tabId} = new Vue({
 	},
 	methods:{
 		getList:()=>{
-			lockTabScreen('{$tabId}');
+			lockTabScreen('SystemUserManage');
 
 			$.ajax({
 				url:"{:url('system/user/getList')}",
@@ -125,15 +125,15 @@ var vm_{$tabId} = new Vue({
 						let list=ret.data['list'];
 
 						// 先清空表格
-						table_{$tabId}.clear().draw();
+						table_SystemUserManage.clear().draw();
 
 						for(i in list){							
 							let operateHtml=''
-							               +'<a onclick="vm_{$tabId}.operateReady(2,'+"'"+list[i]['id']+"','"+list[i]['user_name']+"','"+list[i]['nick_name']+"','"+list[i]['phone']+"','"+list[i]['email']+"','"+list[i]['role_id']+"'"+');" class="btn btn-primary">编辑</a> '
-							               +"<a onclick='vm_{$tabId}.resetPwd_ready("+'"'+list[i]['id']+'","'+list[i]['nick_name']+'"'+")' class='btn btn-warning'>重置密码</a> "
-							               +"<a onclick='vm_{$tabId}.del_ready("+'"'+list[i]['id']+'","'+list[i]['nick_name']+'"'+")' class='btn btn-danger'>删除</a>";
+							               +'<a onclick="vm_SystemUserManage.operateReady(2,'+"'"+list[i]['id']+"','"+list[i]['user_name']+"','"+list[i]['nick_name']+"','"+list[i]['phone']+"','"+list[i]['email']+"','"+list[i]['role_id']+"'"+');" class="btn btn-primary">编辑</a> '
+							               +"<a onclick='vm_SystemUserManage.resetPwd_ready("+'"'+list[i]['id']+'","'+list[i]['nick_name']+'"'+")' class='btn btn-warning'>重置密码</a> "
+							               +"<a onclick='vm_SystemUserManage.del_ready("+'"'+list[i]['id']+'","'+list[i]['nick_name']+'"'+")' class='btn btn-danger'>删除</a>";
 
-							table_{$tabId}.row.add({
+							table_SystemUserManage.row.add({
 								0: list[i]['user_name'],
 								1: list[i]['nick_name'],
 								2: list[i]['phone'],
@@ -142,22 +142,22 @@ var vm_{$tabId} = new Vue({
 							}).draw();
 						}
 
-						unlockTabScreen('{$tabId}');
-						$("#panel_{$tabId}").width($("#table_{$tabId}").width()+30);
+						unlockTabScreen('SystemUserManage');
+						$("#panel_SystemUserManage").width($("#table_SystemUserManage").width()+30);
 					}
 				}
 			})
 		},
 		operateReady:(type=1,userId=0,userName='',nickName='',phone='',email='',roleIds='')=>{
-			vm_{$tabId}.operateType=type;
-			vm_{$tabId}.operateUserId=userId;
-			vm_{$tabId}.operateInputData={
+			vm_SystemUserManage.operateType=type;
+			vm_SystemUserManage.operateUserId=userId;
+			vm_SystemUserManage.operateInputData={
 				userName:userName,
 				nickName:nickName,
 				phone:phone,
 				email:email
 			};
-			vm_{$tabId}.operateOriginData={
+			vm_SystemUserManage.operateOriginData={
 				userName:userName,
 				nickName:nickName,
 				phone:phone,
@@ -166,15 +166,15 @@ var vm_{$tabId} = new Vue({
 			};
 			
 			if(type==1){
-				vm_{$tabId}.operateModalTitle="新 增 用 户";
-				vm_{$tabId}.operateModalBtn="确 认 新 增 用 户 >";
+				vm_SystemUserManage.operateModalTitle="新 增 用 户";
+				vm_SystemUserManage.operateModalBtn="确 认 新 增 用 户 >";
 			}else if(type==2){
-				vm_{$tabId}.operateModalTitle="编 辑 用 户";
-				vm_{$tabId}.operateModalBtn="确 认 编 辑 用 户 >";
+				vm_SystemUserManage.operateModalTitle="编 辑 用 户";
+				vm_SystemUserManage.operateModalBtn="确 认 编 辑 用 户 >";
 			}
 
-			vm_{$tabId}.getAllRole(roleIds.split(","));
-			$("#operateModal").modal("show");
+			vm_SystemUserManage.getAllRole(roleIds.split(","));
+			$("#operateModal_SystemUserManage").modal("show");
 		},
 		operateSure:function(){
 			let userData={};
@@ -182,22 +182,22 @@ var vm_{$tabId} = new Vue({
 			let type=this.operateType;
 
 			// 检查是否有修改数据
-			if(vm_{$tabId}.operateInputData.userName!==vm_{$tabId}.operateOriginData.userName) userData.user_name=vm_{$tabId}.operateInputData.userName;
-			if(vm_{$tabId}.operateInputData.nickName!==vm_{$tabId}.operateOriginData.nickName) userData.nick_name=vm_{$tabId}.operateInputData.nickName;
-			if(vm_{$tabId}.operateInputData.phone!==vm_{$tabId}.operateOriginData.phone) userData.phone=vm_{$tabId}.operateInputData.phone;
-			if(vm_{$tabId}.operateInputData.email!==vm_{$tabId}.operateOriginData.email) userData.email=vm_{$tabId}.operateInputData.email;
-			if(roleIds.join(',')!==vm_{$tabId}.operateOriginData.roleIds) userData.role_id=roleIds;
+			if(vm_SystemUserManage.operateInputData.userName!==vm_SystemUserManage.operateOriginData.userName) userData.user_name=vm_SystemUserManage.operateInputData.userName;
+			if(vm_SystemUserManage.operateInputData.nickName!==vm_SystemUserManage.operateOriginData.nickName) userData.nick_name=vm_SystemUserManage.operateInputData.nickName;
+			if(vm_SystemUserManage.operateInputData.phone!==vm_SystemUserManage.operateOriginData.phone) userData.phone=vm_SystemUserManage.operateInputData.phone;
+			if(vm_SystemUserManage.operateInputData.email!==vm_SystemUserManage.operateOriginData.email) userData.email=vm_SystemUserManage.operateInputData.email;
+			if(roleIds.join(',')!==vm_SystemUserManage.operateOriginData.roleIds) userData.role_id=roleIds;
 			
 			if($.isEmptyObject(userData)==true){
 				showModalTips('请填写需要操作的数据！');
-				vm_{$tabId}.operateInputData={};
-				vm_{$tabId}.operateType=-1;
-				vm_{$tabId}.operateUserId=0;
+				vm_SystemUserManage.operateInputData={};
+				vm_SystemUserManage.operateType=-1;
+				vm_SystemUserManage.operateUserId=0;
 				$('#operateModal').modal('hide');
 				return false;
 			}
 			
-			lockTabScreen('{$tabId}');
+			lockTabScreen('SystemUserManage');
 
 			$.ajax({
 				url:"{:url('system/user/toOperate')}",
@@ -206,22 +206,22 @@ var vm_{$tabId} = new Vue({
 				dataType:"json",
 				error:function(e){
 					console.log(e);
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemUserManage');
 					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 					return false;
 				},
 				success:ret=>{
 					$("#operateModal").modal('hide');
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemUserManage');
 
 					if(ret.code==200){
 						showModalTips("操作成功！");
-						vm_{$tabId}.getList();
+						vm_SystemUserManage.getList();
 
 						// 操作类型为新增，显示用户基本资料及初始密码
 						if(type==1){
-							$("#info_userName_show").html(vm_{$tabId}.operateInputData.userName);
-							$("#info_nickName_show").html(vm_{$tabId}.operateInputData.nickName);
+							$("#info_userName_show").html(vm_SystemUserManage.operateInputData.userName);
+							$("#info_nickName_show").html(vm_SystemUserManage.operateInputData.nickName);
 							$("#info_originPwd_show").html(ret.data['originPassword']);
 							$("#infoModal").modal('show');
 						}
@@ -238,12 +238,12 @@ var vm_{$tabId} = new Vue({
 			})
 		},
 		del_ready:(id,name)=>{
-			vm_{$tabId}.deleteId=id;
+			vm_SystemUserManage.deleteId=id;
 			$("#delName_show").html(name);
 			$("#delModal").modal('show');
 		},
 		del_sure:function(){
-			lockTabScreen('{$tabId}');
+			lockTabScreen('SystemUserManage');
 			
 			let that=this;
 			$.ajax({
@@ -253,18 +253,18 @@ var vm_{$tabId} = new Vue({
 				data:{"sensOprToken":this.sensOprToken,"userId":this.deleteId},
 				error:function(e){
 					console.log(e);
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemUserManage');
 					$("#delModal").modal('hide');
 					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 					return false;
 				},
 				success:function(ret){
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemUserManage');
 					$("#delModal").modal('hide');
 
 					if(ret.code==200){
 						showModalTips("操作成功！");
-						vm_{$tabId}.getList();
+						vm_SystemUserManage.getList();
 						return true;
 					}else if(ret.tips!=""){
 						showModalTips(ret.tips);
@@ -277,37 +277,37 @@ var vm_{$tabId} = new Vue({
 			});
 		},
 		getAllRole:function(roleIds=[]){
-			lockTabScreen('{$tabId}');
+			lockTabScreen('SystemUserManage');
 
 			// 是否已经获取过所有角色
-			if(JSON.stringify(vm_{$tabId}.roleList)=="{}"){
+			if(JSON.stringify(vm_SystemUserManage.roleList)=="{}"){
 				$.ajax({
 					url:headerVm.apiPath+"role/getList",
 					dataType:'json',
 					error:function(e){
 						console.log(JSON.stringify(e));
-						unlockTabScreen('{$tabId}');
+						unlockTabScreen('SystemUserManage');
 						showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 						return false;
 					},
 					success:function(ret){
-						unlockTabScreen('{$tabId}');
+						unlockTabScreen('SystemUserManage');
 
 						if(ret.code==200){
 							let list=[];
 
 							for(i in ret.data['list']){
 								let info=ret.data['list'][i];
-								vm_{$tabId}.roleList[info['id']]=info['name'];
+								vm_SystemUserManage.roleList[info['id']]=info['name'];
 
 								// 检查当前用户是否已拥有此角色
 								if(roleIds.indexOf(info['id'])>=0){
-									vm_{$tabId}.operateUserRoleIds.push(info['id']);
+									vm_SystemUserManage.operateUserRoleIds.push(info['id']);
 								}
 							}
 
 							// 去重
-							vm_{$tabId}.operateUserRoleIds=vm_{$tabId}.operateUserRoleIds.filter((item, index, self) => self.indexOf(item) === index)
+							vm_SystemUserManage.operateUserRoleIds=vm_SystemUserManage.operateUserRoleIds.filter((item, index, self) => self.indexOf(item) === index)
 							return true;
 						}else{
 							showModalTips("系统错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+ret.code+"</font>");
@@ -316,7 +316,7 @@ var vm_{$tabId} = new Vue({
 					}
 				});
 			}else{
-				let roleList=vm_{$tabId}.roleList;
+				let roleList=vm_SystemUserManage.roleList;
 				let list=[];
 
 				for(i in roleList){
@@ -327,8 +327,8 @@ var vm_{$tabId} = new Vue({
 				}
 
 				// 去重
-				vm_{$tabId}.operateUserRoleIds=list.filter((item, index, self) => self.indexOf(item) === index)
-				unlockTabScreen('{$tabId}');
+				vm_SystemUserManage.operateUserRoleIds=list.filter((item, index, self) => self.indexOf(item) === index)
+				unlockTabScreen('SystemUserManage');
 			}
 		},
 		checkDuplicate:function(field='',value=''){
@@ -338,7 +338,7 @@ var vm_{$tabId} = new Vue({
 				dataType:'json',
 				error:function(e){
 					console.log(e);
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemUserManage');
 					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 					return false;
 				},
@@ -355,12 +355,12 @@ var vm_{$tabId} = new Vue({
 			})
 		},
 		chooseRole:function(){
-			vm_{$tabId}.chooseItemModalName="请选择["+vm_{$tabId}.nickName+"]的角色";
-			vm_{$tabId}.$refs.chooseItemModal.show();
+			vm_SystemUserManage.chooseItemModalName="请选择["+vm_SystemUserManage.nickName+"]的角色";
+			vm_SystemUserManage.$refs.chooseItemModal.show();
 		}
 	},
 	mounted:function(){
-		table_{$tabId}=$('#table_{$tabId}').DataTable({
+		table_SystemUserManage=$('#table_SystemUserManage').DataTable({
 			"pageLength": 25,
 			"order":[[0,'asc']],
 			"columnDefs":[{
@@ -388,7 +388,7 @@ var vm_{$tabId} = new Vue({
 				</center>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-success" data-dismiss="modal">&lt; 返回</button> <button type="button" class="btn btn-danger" onclick="vm_{$tabId}.del_sure();">确定 &gt;</button>
+				<button type="button" class="btn btn-success" data-dismiss="modal">&lt; 返回</button> <button type="button" class="btn btn-danger" onclick="vm_SystemUserManage.del_sure();">确定 &gt;</button>
 			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->

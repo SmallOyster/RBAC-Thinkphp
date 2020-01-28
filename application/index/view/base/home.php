@@ -3,7 +3,7 @@
  * @name 生蚝科技RBAC框架(TP)-V-主框架
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-20
- * @version 2020-01-11
+ * @version 2020-01-28
  */
 ?>
 
@@ -176,7 +176,7 @@ var headerVm = new Vue({
 				success:function(ret){
 					unlockScreen();
 					$(".tab-content").append('<div class="tab-pane active" id="tabPanel-'+menuId+'" style="overflow-x:scroll;">'+ret+'</div>');
-
+					
 					if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)){
 						height=document.body.clientHeight;
 						height=window.screen.availWidth;
@@ -195,6 +195,12 @@ var headerVm = new Vue({
 		removeTab:(id)=>{
 			$("#tab-"+id).parent().remove();
 			$("#tabPanel-"+id).remove();
+		},
+		navbarLogout:()=>{
+			sessionStorage.removeItem('allRoleInfo');
+			showModalTips('您已安全登出系统！');
+			window.location.href=headerVm.rootUrl+"logout";
+			return true;
 		}
 	}
 });

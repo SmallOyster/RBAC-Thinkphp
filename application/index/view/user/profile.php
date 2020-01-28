@@ -1,10 +1,10 @@
 <?php
 /**
  * @name 生蚝科技RBAC框架(TP)-V-个人资料
- * @package System/Setting
+ * @package Index/User
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-27
- * @version 2020-01-15
+ * @version 2020-01-21
  */
 ?>
 
@@ -80,7 +80,44 @@ var vm_{$tabId} = new Vue({
 	},
 	methods:{
 		updateUserInfo:function(){
-		
+			let updateData={};
+			
+			for(i in this.inputData){
+				if(this.inputData[i]!=this.userInfo[i]){
+					updateData[changeCamelToUnderline(i)]=this.inputData[i];
+				}
+			}
+			
+			if(updateData=={}){
+				showModalTips('请修改你想要修改的数据');
+				return false;			
+			}
+			
+			lockTabScreen('{$tabId}');
+			$.ajax({
+				url:headerVm.rootUrl+"index/user/toUpdateProfile",
+				type:"post",
+				data:{'data':updateData},
+				dataType:"json",
+				error:function(e){
+					unlockTabScreen('{$tabId}');
+					showModalTips("服务器错误！"+e.status);
+					console.log(JSON.stringify(e));
+					return false;
+				},
+				success:function(ret){
+					unlockTabScreen('{$tabId}');
+					console.log("ajax-suc",JSON.stringify(ret.data));
+
+					if(ret.code==200){
+						showModalTips("修改成功<br>资料变动将在您下次登录时呈现");
+						return true;
+					}else if(ret.tips!=""){
+						showModalTips(ret.tips);
+						return false;					
+					}
+				}
+			})
 		}
 	}
 });

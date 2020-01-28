@@ -3,7 +3,7 @@
  * @name 生蚝科技RBAC框架(TP)-V-角色列表
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-22
- * @version 2020-01-15
+ * @version 2020-01-28
  */
 ?>
 <style>
@@ -12,14 +12,14 @@
 </style>
 
 <!-- Vue main -->
-<div id="tabVue_{$tabId}">
-		<a onclick='vm_{$tabId}.operateReady(1)' class="btn btn-primary btn-block">新 增 角 色</a>
+<div id="tabVue_SystemRoleManage">
+		<a @click='operateReady(1)' class="btn btn-primary btn-block">新 增 角 色</a>
 
 		<hr>
 
 		<div class="panel panel-default">
 			<div class="panel-body">
-				<table id="table_{$tabId}" class="table table-striped table-bordered table-hover" style="border-radius: 5px; border-collapse: separate;">
+				<table id="table_SystemRoleManage" class="table table-striped table-bordered table-hover" style="border-radius: 5px; border-collapse: separate;">
 					<thead>
 						<tr>
 							<th>角色名称</th>
@@ -31,7 +31,7 @@
 			</div>
 		</div>
 
-	<div class="modal fade" id="operateModal" data-backdrop="static" data-keyboard="false">
+	<div class="modal fade" id="operateModal_SystemRoleManage" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -51,7 +51,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-warning" onclick="vm_{$tabId}.name='';vm_{$tabId}.remark='';vm_{$tabId}.operateType=-1;vm_{$tabId}.operateRoleId=0;$('#operateModal').modal('hide');">&lt; 返回</button> <button class="btn btn-success" @click='operateSure'>{{operateModalBtn}}</button>
+					<button class="btn btn-warning" onclick="vm_SystemRoleManage.name='';vm_SystemRoleManage.remark='';vm_SystemRoleManage.operateType=-1;vm_SystemRoleManage.operateRoleId=0;$('#operateModal_SystemRoleManage').modal('hide');">&lt; 返回</button> <button class="btn btn-success" @click='operateSure'>{{operateModalBtn}}</button>
 				</div>
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
@@ -65,10 +65,10 @@
 					<h3 class="modal-title">分配 [{{setPermissionRoleName}}] 的权限</h3>
 				</div>
 				<div class="modal-body">
-					<ul id="treeDemo" class="ztree"></ul>
+					<ul id="tree_SystemRoleManage" class="ztree"></ul>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-warning" onclick="vm_{$tabId}.setPermissionRoleId=0;vm_{$tabId}.setPermissionRoleName='';$('#treeModal').modal('hide');">&lt; 返回</button> <button class="btn btn-success" @click='setPermission_sure'>确认分配权限 &gt;</button>
+					<button class="btn btn-warning" onclick="vm_SystemRoleManage.setPermissionRoleId=0;vm_SystemRoleManage.setPermissionRoleName='';$('#treeModal').modal('hide');">&lt; 返回</button> <button class="btn btn-success" @click='setPermission_sure'>确认分配权限 &gt;</button>
 				</div>
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
@@ -77,10 +77,10 @@
 <!-- ./页面内容 -->
 
 <script>
-var table_{$tabId};
+var table_SystemRoleManage;
 
-var vm_{$tabId} = new Vue({
-	el:'#tabVue_{$tabId}',
+var vm_SystemRoleManage = new Vue({
+	el:'#tabVue_SystemRoleManage',
 	data:{
 		deleteId:0,
 		name:"",
@@ -92,7 +92,7 @@ var vm_{$tabId} = new Vue({
 		operateOriginData:[],
 		setPermissionRoleId:0,
 		setPermissionRoleName:"",
-		treeNodes:[],
+		treeNode:{},
 		treeCheckNodeId:"",
 		treeSetting:{
 			view: {
@@ -118,18 +118,18 @@ var vm_{$tabId} = new Vue({
 						let list=ret.data['list'];
 
 						// 先清空表格
-						$.fn.dataTable.tables({api: true}).clear().draw();
+						table_SystemRoleManage.clear().draw();
 
 						for(i in list){
 							let operateHtml=''
-							               +"<a onclick='vm_{$tabId}.operateReady(2,"+'"'+list[i]['id']+'","'+list[i]['name']+'","'+list[i]['remark']+'"'+")' class='btn btn-info'>编辑</a> "
-							               +"<a onclick='vm_{$tabId}.del_ready("+'"'+list[i]['id']+'","'+list[i]['name']+'"'+")' class='btn btn-danger'>删除</a> "
-							               +"<a onclick='vm_{$tabId}.setPermission_ready("+'"'+list[i]['id']+'","'+list[i]['name']+'"'+")' class='btn btn-success'>分配权限</a> "
+							               +"<a onclick='vm_SystemRoleManage.operateReady(2,"+'"'+list[i]['id']+'","'+list[i]['name']+'","'+list[i]['remark']+'"'+")' class='btn btn-info'>编辑</a> "
+							               +"<a onclick='vm_SystemRoleManage.del_ready("+'"'+list[i]['id']+'","'+list[i]['name']+'"'+")' class='btn btn-danger'>删除</a> "
+							               +"<a onclick='vm_SystemRoleManage.setPermission_ready("+'"'+list[i]['id']+'","'+list[i]['name']+'"'+")' class='btn btn-success'>分配权限</a> "
 							               +'<a href="'+headerVm.rootUrl+'admin/role/setPermission?id='+list[i]['id']+'&name='+list[i]['name']+'" class="btn btn-success">分配权限(旧)</a> ';
 
-							operateHtml=list[i]['is_default']!=0?operateHtml:operateHtml+"<a onclick='vm_{$tabId}.setDefaultRole("+'"'+list[i]['id']+'"'+")' class='btn btn-primary'>设为默认角色</a> ";
+							operateHtml=list[i]['is_default']!=0?operateHtml:operateHtml+"<a onclick='vm_SystemRoleManage.setDefaultRole("+'"'+list[i]['id']+'"'+")' class='btn btn-primary'>设为默认角色</a> ";
 
-							table_{$tabId}.row.add({
+							table_SystemRoleManage.row.add({
 								0: list[i]['name'],
 								1: operateHtml
 							}).draw();
@@ -138,36 +138,36 @@ var vm_{$tabId} = new Vue({
 				}
 			})
 		},
-		operateReady:(type=1,roleId=0,name='',remark='')=>{
-			vm_{$tabId}.operateType=type;
-			vm_{$tabId}.operateRoleId=roleId;
-			vm_{$tabId}.name=name;
-			vm_{$tabId}.remark=remark;
-			vm_{$tabId}.operateOriginData=[name,remark];
+		operateReady:function(type=1,roleId=0,name='',remark=''){
+			this.operateType=type;
+			this.operateRoleId=roleId;
+			this.name=name;
+			this.remark=remark;
+			this.operateOriginData=[name,remark];
 
 			if(type==1){
-				vm_{$tabId}.operateModalTitle="新 增 角 色";
-				vm_{$tabId}.operateModalBtn="确 认 新 增 角 色 >";
+				this.operateModalTitle="新 增 角 色";
+				this.operateModalBtn="确 认 新 增 角 色 >";
 			}else if(type==2){
-				vm_{$tabId}.operateModalTitle="编 辑 角 色";
-				vm_{$tabId}.operateModalBtn="确 认 编 辑 角 色 >";
+				this.operateModalTitle="编 辑 角 色";
+				this.operateModalBtn="确 认 编 辑 角 色 >";
 			}
 
-			$("#operateModal").modal("show");
+			$("#operateModal_SystemRoleManage").modal("show");
 		},
 		operateSure:function(){
 			let data={};
 
 			// 检查是否有修改数据
-			if(vm_{$tabId}.name!==vm_{$tabId}.operateOriginData[0]) data.name=vm_{$tabId}.name;
-			if(vm_{$tabId}.remark!==vm_{$tabId}.operateOriginData[1]) data.remark=vm_{$tabId}.remark;
+			if(this.name!==this.operateOriginData[0]) data.name=this.name;
+			if(this.remark!==this.operateOriginData[1]) data.remark=this.remark;
 			
 			if($.isEmptyObject(data)==true){
 				showModalTips('请填写需要操作的数据！');
 				return;
 			}
 
-			lockTabScreen('{$tabId}');
+			lockTabScreen('SystemRoleManage');
 			
 			$.ajax({
 				url:"./toOperate",
@@ -176,17 +176,17 @@ var vm_{$tabId} = new Vue({
 				dataType:"json",
 				error:function(e){
 					console.log(e);
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemRoleManage');
 					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 					return false;				
 				},
 				success:ret=>{
 					$("#operateModal").modal('hide');
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemRoleManage');
 
 					if(ret.code==200){
 						alert("操作成功！");
-						vm_{$tabId}.getList();
+						vm_SystemRoleManage.getList();
 						return;
 					}else if(ret.code==4001){
 						showModalTips("数据包含非法字段！<hr>请联系技术支持<br>并提交以下错误码：AU4001-"+ret.data);
@@ -204,38 +204,66 @@ var vm_{$tabId} = new Vue({
 				}
 			})
 		},
-		setPermission_ready:(id,name)=>{
-			vm_{$tabId}.setPermissionRoleId=id;
-			vm_{$tabId}.setPermissionRoleName=name;
+		getAllMenu:()=>{
+			lockTabScreen('SystemRoleManage');
+			
+			try{
+				$.fn.zTree.destroy();
+			}catch{
+
+			}
+
+			$.ajax({
+				url:headerVm.apiPath+"menu/getList",
+				data:{'isZtree':1},
+				dataType:"json",
+				async:false,
+				error:function(e){
+					console.log(e);
+					unlockTabScreen('SystemRoleManage');
+					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
+					return false;
+				},
+				success:function(ret){
+					vm_SystemRoleManage.treeNode=ret;
+					$.fn.zTree.init($("#tree_SystemRoleManage"),vm_SystemRoleManage.treeSetting,vm_SystemRoleManage.treeNode);
+					unlockTabScreen('SystemRoleManage');
+				}
+			});
+		},
+		setPermission_ready:function(id,name){
+			this.setPermissionRoleId=id;
+			this.setPermissionRoleName=name;
+
 			$("#treeModal").modal("show");
 		},
-		del_ready:(id,name)=>{
-			vm_{$tabId}.deleteId=id;
+		del_ready:function(id,name){
+			this.deleteId=id;
 			$("#delName_show").html(name);
 			$("#delModal").modal('show');
 		},
 		del_sure:()=>{
-			lockTabScreen('{$tabId}');
+			lockTabScreen('SystemRoleManage');
 
 			$.ajax({
 				url:"./toDelete",
 				type:"post",
 				dataType:"json",
-				data:{"id":vm_{$tabId}.deleteId},
+				data:{"id":vm_SystemRoleManage.deleteId},
 				error:function(e){
 					console.log(e);
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemRoleManage');
 					$("#delModal").modal('hide');
 					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 					return false;
 				},
 				success:function(ret){
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemRoleManage');
 					$("#delModal").modal('hide');
 
 					if(ret.code==200){
 						alert("删除成功！");
-						vm_{$tabId}.getList();
+						vm_SystemRoleManage.getList();
 						return true;
 					}else if(ret.code==1){
 						showModalTips("删除失败！！！");
@@ -247,8 +275,8 @@ var vm_{$tabId} = new Vue({
 				}
 			});
 		},
-		setDefaultRole:(id)=>{
-			lockTabScreen('{$tabId}');
+		setDefaultRole:function(id){
+			lockTabScreen('SystemRoleManage');
 
 			$.ajax({
 				url:"./toSetDefaultRole",
@@ -257,17 +285,17 @@ var vm_{$tabId} = new Vue({
 				data:{"id":id},
 				error:function(e){
 					console.log(e);
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemRoleManage');
 					$("#delModal").modal('hide');
 					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 					return false;
 				},
 				success:function(ret){
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemRoleManage');
 
 					if(ret.code==200){
 						alert("设置成功！");
-						vm_{$tabId}.getList();
+						vm_SystemRoleManage.getList();
 						return true;
 					}else if(ret.code==1){
 						showModalTips("设置失败！！！");
@@ -284,7 +312,7 @@ var vm_{$tabId} = new Vue({
 		},
 		getCheckedNodes:function(){
 			let ids="";
-		 var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+			var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
 			nodes = zTree.getCheckedNodes();
 			
 			for (i=0,l=nodes.length;i<l;i++){
@@ -295,7 +323,7 @@ var vm_{$tabId} = new Vue({
 			console.log(ids);
 			this.treeCheckNodeId=ids;
 		},
-		getAllMenu:function(){
+		/*getAllMenu:function(){
 			$.ajax({
 				url:headerVm.apiPath+"role/getRoleMenuForZtree",
 				data:{'roleId':this.setPermissionRoleId},
@@ -303,7 +331,7 @@ var vm_{$tabId} = new Vue({
 				async:false,
 				error:function(e){
 					console.log(e);
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemRoleManage');
 					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 					return false;
 				},
@@ -311,9 +339,9 @@ var vm_{$tabId} = new Vue({
 					return ret;
 				}
 			});
-		},
+		},*/
 		setPermission_sure:function(){
-			lockTabScreen('{$tabId}');
+			lockTabScreen('SystemRoleManage');
 			roleId=this.setPermissionRoleId;
 			menuIds=this.treeCheckNodeId;
 
@@ -324,12 +352,12 @@ var vm_{$tabId} = new Vue({
 				data:{'roleId':roleId,'menuIds':menuIds},
 				error:function(e){
 					console.log(e);
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemRoleManage');
 					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 					return false;
 				},
 				success:function(ret){
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemRoleManage');
 					$("#treeModal").modal("hide");
 
 					if(ret.code==200){
@@ -353,11 +381,9 @@ var vm_{$tabId} = new Vue({
 		}
 	},
 	mounted:function(){
-		table_{$tabId}=$('#table_{$tabId}').DataTable({});
+		table_SystemRoleManage=$('#table_SystemRoleManage').DataTable({});
 		this.getList();
-		/*this.treeNodes=this.getAllMenu();
-		
-		$.fn.zTree.init($("#treeDemo"),this.treeSetting,this.treeNodes);*/
+		this.getAllMenu();
 	}
 });
 </script>
@@ -377,7 +403,7 @@ var vm_{$tabId} = new Vue({
 				</center>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-success" data-dismiss="modal">&lt; 返回</button> <button type="button" class="btn btn-danger" onclick="vm_{$tabId}.del_sure();">确定 &gt;</button>
+				<button type="button" class="btn btn-success" data-dismiss="modal">&lt; 返回</button> <button type="button" class="btn btn-danger" onclick="vm_SystemRoleManage.del_sure();">确定 &gt;</button>
 			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->

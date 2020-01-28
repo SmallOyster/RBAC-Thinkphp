@@ -74,4 +74,17 @@ class Menu
 			returnAjaxData(500,'Failed to operate',[],'操作系统菜单失败');
 		}
 	}
+	
+	
+	public function delete()
+	{
+		//$sensOprToken=inputPost('sensOprToken',0,1);
+		
+		$menuId=inputPost('menuId',0,1);
+		$query=model('Menu')->destroy([$menuId]);
+		$query2=model('RolePermission')->destroy(['menu_id'=>$menuId]);
+		
+		if($query==1) returnAjaxData(200,'success');
+		else returnAjaxData(500,'Failed to delete menu: Database error',[],'删除菜单失败');
+	}
 }

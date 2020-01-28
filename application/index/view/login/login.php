@@ -3,7 +3,7 @@
  * @name 生蚝科技RBAC框架(TP)-V-登录
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-12-29
- * @version 2020-01-06
+ * @version 2020-01-27
  */
 ?>
 
@@ -74,6 +74,8 @@
 </center>
 
 <script>
+var isAjaxing=0;// 防止重复登录
+
 function launchQQ(){
 	if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)){
 		window.location.href="mqqwpa://im/chat?chat_type=wpa&uin=571339406";
@@ -82,11 +84,11 @@ function launchQQ(){
 	}
 }
 
+
 function showWXCode(){
 	$("#wxModal").modal('show');
 }
 
-var isAjaxing=0;
 
 // 监听模态框关闭事件
 $(function (){
@@ -96,9 +98,8 @@ $(function (){
 });
 
 window.onload=function(){
-
 	/********** ▼ 记住密码 ▼ **********/
-	Remember=getCookie("{:config('session.prefix')}_RmUN");
+	Remember=getCookie("RememberUserName");
 	if(Remember!=null){
 		$("#userName").val(Remember);
 		$("#password").focus();
@@ -107,7 +108,7 @@ window.onload=function(){
 		$("#userName").focus();
 	}
 	/********** ▲ 记住密码 ▲ **********/
-
+	
 	sessionStorage.removeItem("allRoleInfo");
 }
 
@@ -118,7 +119,6 @@ function toLogin(){
 	}
 
 	isAjaxing=1;
-	lockScreen();
 	$("#userName").attr("disabled",true);
 	$("#password").attr("disabled",true);
 	userName=$("#userName").val();
@@ -127,26 +127,26 @@ function toLogin(){
 	/********** ▼ 记住密码 ▼ **********/
 	Remember=$("input[type='checkbox']").is(':checked');
 	if(Remember==true){
-		setCookie("{:config('session.prefix')}RmUN",userName);
+		setCookie("RememberUserName",userName);
 	}else{
-		delCookie("{:config('session.prefix')}RmUN");
+		delCookie("RememberUserName");
 	}
 	/********** ▲ 记住密码 ▲ **********/
 
 	if(userName==""){
-		$("#tips").html("请输入用户名！");
-		unlockScreen();
+		showModalTips("请输入用户名！");
 		$("#userName").removeAttr("disabled");
 		$("#password").removeAttr("disabled");
 		return false;
 	}
 	if(password==""){
-		unlockScreen();
 		showModalTips("请输入密码！");
+		$("#userName").removeAttr("disabled");
 		$("#password").removeAttr("disabled");
 		return false;
 	}
 	
+	lockScreen();
 	$.ajax({
 		url:"{:url('index/login/toLogin')}",
 		type:"post",

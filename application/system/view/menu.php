@@ -4,7 +4,7 @@
  * @package System/Menu
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-11-01
- * @version 2020-01-15
+ * @version 2020-01-28
  */
 ?>
 <style>
@@ -13,17 +13,17 @@
 </style>
 
 <!-- Vue main -->
-<div id="tabVue-{$tabId}">
+<div id="tabVue_SystemMenuManage">
 	<a @click="operateReady(0,0,'home','系统主菜单')" class="btn btn-primary btn-block">新 增 主 菜 单</a>
 
-	<ul id="treeDemo" class="ztree"></ul>
+	<ul id="tree_SystemMenuManage" class="ztree"></ul>
 
-	<div class="modal fade" id="operateModal" data-backdrop="static" data-keyboard="false">
+	<div class="modal fade" id="operateModal_SystemMenuManage" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-					<h3 class="modal-title" id="operateTitle"></h3>
+					<h3 class="modal-title" id="operateTitle_SystemMenuManage"></h3>
 				</div>
 				<div class="modal-body">
 					<div id="fatherMenuDiv" class="alert" style="font-size:16px;background-color:#caffdf;color:#e029ff;border-color:white;">父菜单：<i id='menuIcon' aria-hidden="true" style="font-weight:bold;"></i></div>
@@ -32,10 +32,9 @@
 							<label for="name">菜单类型</label>
 							<select class="form-control" v-model="menuType" onkeyup='if(event.keyCode==13)$("#name").focus()'>
 								<option value="1">菜单</option>
-								<option value="2">按钮</option>
-								<option value="3">接口</option>
+								<option value="2" disabled>按钮（未开发）</option>
+								<option value="3" disabled>接口（未开发）</option>
 							</select>
-							<p class="help-block">Tips</p>
 						</div>
 						<br>
 						<div class="form-group">
@@ -45,9 +44,9 @@
 						</div>
 						<br>
 						<div class="form-group">
-							<label for="icon">菜单图标 ( 预览: <i id="iconPreviewEle" aria-hidden="true"></i> ) &nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-primary" onclick="$('#icon').val('circle-o');vm{$tabId}.icon='circle-o';vm{$tabId}.iconPreview();">使用默认图标</button></label>
+							<label for="icon">菜单图标 ( 预览: <i id="iconPreviewEle" aria-hidden="true"></i> ) &nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-primary" onclick="$('#icon').val('circle-o');vm_SystemMenuManage.icon='circle-o';vm_SystemMenuManage.iconPreview();">使用默认图标</button></label>
 							<input class="form-control" id="icon" v-model="icon" onkeyup='if(event.keyCode==13)$("#uri").focus()' @input='iconPreview'>
-							<p class="help-block">请输入Font-Awesome图标名称，无需输入前缀“fa-”，输入后可在上方预览</p>
+							<p class="help-block">请输入Font-Awesome图标名称，无需输入前缀“fa-”，输入后可实时在上方预览</p>
 						</div>
 						<br>
 						<div class="form-group">
@@ -61,7 +60,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-warning" onclick="vm{$tabId}.icon='';vm{$tabId}.uri='';vm{$tabId}.name='';vm{$tabId}.operateType=-1;vm{$tabId}.operateMenuId=0;$('#operateModal').modal('hide');">&lt; 返回</button> <button class="btn btn-success" @click='operateSure' id="operateBtn"></button>
+					<button class="btn btn-warning" onclick="vm_SystemMenuManage.icon='';vm_SystemMenuManage.uri='';vm_SystemMenuManage.name='';vm_SystemMenuManage.operateType=-1;vm_SystemMenuManage.operateMenuId=0;$('#operateModal_SystemMenuManage').modal('hide');">&lt; 返回</button> <button class="btn btn-success" @click='operateSure' id="operateBtn_SystemMenuManage"></button>
 				</div>
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
@@ -69,8 +68,8 @@
 </div>
 
 <script>
-var vm{$tabId} = new Vue({
-	el:'#tabVue-{$tabId}',
+var vm_SystemMenuManage = new Vue({
+	el:'#tabVue_SystemMenuManage',
 	data:{
 		deleteId:0,
 		menuType:1,
@@ -97,9 +96,14 @@ var vm{$tabId} = new Vue({
 	},
 	methods:{
 		getAllMenu:()=>{
-			unlockTabScreen('{$tabId}');
-			$.fn.zTree.destroy();
+			lockTabScreen('SystemMenuManage');
 			
+			try{
+				$.fn.zTree.destroy();
+			}catch{
+
+			}
+
 			$.ajax({
 				url:headerVm.apiPath+"menu/getList",
 				data:{'isZtree':1},
@@ -107,19 +111,19 @@ var vm{$tabId} = new Vue({
 				async:false,
 				error:function(e){
 					console.log(e);
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemMenuManage');
 					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 					return false;
 				},
 				success:function(ret){
-					vm{$tabId}.zNodes=ret;
-					$.fn.zTree.init($("#treeDemo"),vm{$tabId}.setting,vm{$tabId}.zNodes);
-					setTimeout(function(){unlockTabScreen('{$tabId}')},300);
+					vm_SystemMenuManage.zNodes=ret;
+					$.fn.zTree.init($("#tree_SystemMenuManage"),vm_SystemMenuManage.setting,vm_SystemMenuManage.zNodes);
+					unlockTabScreen('SystemMenuManage');
 				}
 			});
 		},
 		iconPreview:()=>{
-			$("#iconPreviewEle").attr("class","fa fa-"+vm{$tabId}.icon);
+			$("#iconPreviewEle").attr("class","fa fa-"+vm_SystemMenuManage.icon);
 		},
 		inputJumpOutURI:()=>{
 			uri=prompt("请输入需要跳转到的网站的完整URL（包括HTTP/HTTPS头）","http://");
@@ -130,75 +134,74 @@ var vm{$tabId} = new Vue({
 			}else if(uri==null){
 				return;
 			}else{
-				vm{$tabId}.uri="show/jumpout/"+uri;
+				vm_SystemMenuManage.uri="show/jumpout/"+uri;
 				$("#uri").val("show/jumpout/"+uri);
 			}
 		},
-		operateReady:(type=0,menuId='',icon='',name='',uri='')=>{
-		alert(menuId);
+		operateReady:function(type=0,menuId='',icon='',name='',uri=''){
 			if(type==0){
 				$("#fatherMenuDiv").show();
-				$('#operateTitle').html('新 增 主 菜 单');
-				$('#operateBtn').html('确 认 新 增 菜 单 &gt;');
+				$('#operateTitle_SystemMenuManage').html('新 增 主 菜 单');
+				$('#operateBtn_SystemMenuManage').html('确 认 新 增 菜 单 &gt;');
 			}else if(type==1){
 				$("#fatherMenuDiv").show();
-				$('#operateTitle').html('新 增 菜 单');
-				$('#operateBtn').html('确 认 新 增 菜 单 &gt;');
+				$('#operateTitle_SystemMenuManage').html('新 增 菜 单');
+				$('#operateBtn_SystemMenuManage').html('确 认 新 增 菜 单 &gt;');
 			}else if(type==2){
 				$("#fatherMenuDiv").hide();
-				$('#operateTitle').html('编 辑 菜 单');
-				$('#operateBtn').html('确 认 编 辑 菜 单 &gt;');
-				vm{$tabId}.name=name;
-				vm{$tabId}.uri=uri;
-				vm{$tabId}.icon=icon;
-				vm{$tabId}.iconPreview();
+				$('#operateTitle_SystemMenuManage').html('编 辑 菜 单');
+				$('#operateBtn_SystemMenuManage').html('确 认 编 辑 菜 单 &gt;');
+				this.name=name;
+				this.uri=uri;
+				this.icon=icon;
+				this.iconPreview();
 			}else{
 				return false;
 			}
 
-			vm{$tabId}.operateMenuId=menuId;
-			vm{$tabId}.operateType=type;
+			this.operateMenuId=menuId;
+			this.operateType=type;
 			$('#menuIcon').attr('class','fa fa-'+icon);
 			$('#menuIcon').html(' '+name);
-			$('#operateModal').modal('show');
+			$('#operateModal_SystemMenuManage').modal('show');
 		},
-		operateSure:()=>{
-			unlockTabScreen('{$tabId}');
+		operateSure:function(){
+			unlockTabScreen('SystemMenuManage');
 
-			if(vm{$tabId}.name==""){
-				unlockTabScreen('{$tabId}');
+			if(this.name==""){
+				unlockTabScreen('SystemMenuManage');
 				showModalTips("请输入菜单名称！");
 				return false;
 			}
-			if(vm{$tabId}.name.length<1 || vm{$tabId}.name.length>20){
-				unlockTabScreen('{$tabId}');
+			if(this.name.length<1 || this.name.length>20){
+				unlockTabScreen('SystemMenuManage');
 				showModalTips("请输入 1-20字 的菜单名称！");
 				return false;
 			}
-			if(vm{$tabId}.icon==""){
-				unlockTabScreen('{$tabId}');
+			if(this.icon==""){
+				unlockTabScreen('SystemMenuManage');
 				showModalTips("请输入菜单图标名称！");
 				return false;
 			}
 
 			$.ajax({
-				url:"{:URL('toOperate')}",
+				url:"{:url('toOperate')}",
 				type:"post",
-				data:{"operateType":vm{$tabId}.operateType,"menuId":vm{$tabId}.operateMenuId,"menuType":vm{$tabId}.menuType,"name":vm{$tabId}.name,"icon":vm{$tabId}.icon,"uri":vm{$tabId}.uri},
+				data:{"operateType":this.operateType,"menuId":this.operateMenuId,"menuType":this.menuType,"name":this.name,"icon":this.icon,"uri":this.uri},
 				dataType:"json",
 				error:function(e){
 					console.log(e.responseText);
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemMenuManage');
 					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 					return false;
 				},
 				success:function(ret){
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemMenuManage');
 
 					if(ret.code==200){
-						$("#operateModal").modal('hide');
+						$("#operateModal_SystemMenuManage").modal('hide');
 						alert("操作成功！");
-						vm{$tabId}.getAllMenu();
+						vm_SystemMenuManage.getAllMenu();
 						return true;
 					}else if(ret.code==500){
 						showModalTips("操作失败！！！");
@@ -213,33 +216,33 @@ var vm{$tabId} = new Vue({
 				}
 			});
 		},
-		deleteReady:(id,name)=>{
-			vm{$tabId}.deleteId=id;
+		deleteReady:function(id,name){
+			this.deleteId=id;
 			$("#delName_show").html(id+". "+name);
 			$("#delModal").modal('show');
 		},
 		deleteSure:()=>{
-			unlockTabScreen('{$tabId}');
+			unlockTabScreen('SystemMenuManage');
 
 			$.ajax({
-				url:"./toDelete",
+				url:"{:url('delete')}",
 				type:"post",
 				dataType:"json",
-				data:{"id":vm{$tabId}.deleteId},
+				data:{"menuId":vm_SystemMenuManage.deleteId},
 				error:function(e){
-					console.log(e);
-					unlockTabScreen('{$tabId}');
+					console.log(JSON.stringify(e));
+					unlockTabScreen('SystemMenuManage');
 					$("#delModal").modal('hide');
 					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 					return false;
 				},
 				success:function(ret){
-					unlockTabScreen('{$tabId}');
+					unlockTabScreen('SystemMenuManage');
 
 					if(ret.code==200){
 						$("#delModal").modal('hide');
 						alert("删除成功！");
-						vm{$tabId}.getAllMenu();
+						vm_SystemMenuManage.getAllMenu();
 						return true;
 					}else if(ret.code==1){
 						$("#delModal").modal('hide');
@@ -263,14 +266,14 @@ var vm{$tabId} = new Vue({
 	}
 });
 
-vm{$tabId}.getAllMenu();
+vm_SystemMenuManage.getAllMenu();
 
 function addHoverDom(treeId, treeNode) {
 	var aObj=$("#"+treeNode.tId+"_a");
 	var editStr=""
-		+"<button class='btn btn-info' id='treeBtn_edit_"+treeNode.id+"' onclick="+'"'+"vm{$tabId}.operateReady(2,'"+treeNode.id+"','"+treeNode.menuIcon+"','"+treeNode.menuName+"','"+treeNode.uri+"')"+'"'+"'>编辑</button> "
-		+"<button class='btn btn-danger' id='treeBtn_delete_"+treeNode.id+"' onclick="+'"'+"vm{$tabId}.deleteReady('"+treeNode.id+"','"+treeNode.name+"')"+'"'+"'>删除</button> "
-		+"<button class='btn btn-success' id='treeBtn_add_"+treeNode.id+"' onclick="+'"'+"vm{$tabId}.operateReady(1,'"+treeNode.id+"','"+treeNode.menuIcon+"','"+treeNode.menuName+"')"+'"'+"'>新增子菜单</button>";
+		+"<button class='btn btn-info' id='treeBtn_edit_"+treeNode.id+"' onclick="+'"'+"vm_SystemMenuManage.operateReady(2,'"+treeNode.id+"','"+treeNode.menuIcon+"','"+treeNode.menuName+"','"+treeNode.uri+"')"+'"'+"'>编辑</button> "
+		+"<button class='btn btn-danger' id='treeBtn_delete_"+treeNode.id+"' onclick="+'"'+"vm_SystemMenuManage.deleteReady('"+treeNode.id+"','"+treeNode.name+"')"+'"'+"'>删除</button> "
+		+"<button class='btn btn-success' id='treeBtn_add_"+treeNode.id+"' onclick="+'"'+"vm_SystemMenuManage.operateReady(1,'"+treeNode.id+"','"+treeNode.menuIcon+"','"+treeNode.menuName+"')"+'"'+"'>新增子菜单</button>";
 	
 	// 如果已存在button就返回
 	if($("#treeBtn_edit_"+treeNode.id).length>0) return;
@@ -305,7 +308,7 @@ function removeHoverDom(treeId, treeNode) {
 				</center>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-success" data-dismiss="modal">&lt; 返回</button> <button type="button" class="btn btn-danger" onclick="vm{$tabId}.deleteSure()">确定 &gt;</button>
+				<button type="button" class="btn btn-success" data-dismiss="modal">&lt; 返回</button> <button type="button" class="btn btn-danger" onclick="vm_SystemMenuManage.deleteSure()">确定 &gt;</button>
 			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->

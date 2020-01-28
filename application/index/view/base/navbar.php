@@ -1,10 +1,10 @@
 <?php
 /**
  * @name 生蚝科技RBAC框架(TP)-V-导航栏
- * @package System/Setting
+ * @package Index/base
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-20
- * @version 2020-01-13
+ * @version 2020-01-28
  */
 ?>
 
@@ -32,7 +32,6 @@
 						<li class="user-footer">
 							<div class="pull-left">
 								<a @click="addTab('__userProfile','{:url('/index/user/profile')}','用户资料')" class="btn btn-default btn-flat">用户中心</a>
-								<a data-toggle="modal" data-target="#changePasswordModal" class="btn btn-default btn-flat">修改密码</a>
 							</div>
 							<div class="pull-right">
 								<button data-toggle="modal" data-target="#logoutModal" class="btn btn-default btn-flat">登出</button>
@@ -67,7 +66,7 @@
 					<i class="fa fa-home"></i> 系统主页面
 				</a>
 			</li>
-			<li v-for="fatherInfo in treeData" v-if="fatherInfo['hasChild']!=1 && fatherInfo['type']==1"><a @click="addTab(fatherInfo['id'],[rootUrl+fatherInfo['uri']],fatherInfo['name'])"><i :class="['fa fa-'+fatherInfo['icon']]"></i> {{fatherInfo['name']}}</a></li>
+			<li v-for="fatherInfo in treeData" v-if="fatherInfo['hasChild']!=1 && fatherInfo['type']==1"><a @click="addTab(fatherInfo['eng_name'],[rootUrl+fatherInfo['uri']],fatherInfo['name'])"><i :class="['fa fa-'+fatherInfo['icon']]"></i> {{fatherInfo['name']}}</a></li>
 			<!-- 二级菜单 -->
 			<li v-else-if="fatherInfo['type']==1" class="treeview">
 				<a href="#">
@@ -75,7 +74,7 @@
 					<span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
 				</a>
 				<ul class="treeview-menu">
-					<li v-for="childInfo in fatherInfo['child']" v-if="childInfo['hasChild']!=1"><a @click="addTab(childInfo['id'],[rootUrl+childInfo['uri']],childInfo['name'])"><i :class="['fa fa-'+childInfo['icon']]"></i> {{childInfo['name']}}</a></li>
+					<li v-for="childInfo in fatherInfo['child']" v-if="childInfo['hasChild']!=1"><a @click="addTab(childInfo['eng_name'],[rootUrl+childInfo['uri']],childInfo['name'])"><i :class="['fa fa-'+childInfo['icon']]"></i> {{childInfo['name']}}</a></li>
 					<!-- 三级菜单 -->
 					<li v-else class="treeview">
 						<a href="#">
@@ -83,7 +82,7 @@
 							<span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
 						</a>
 						<ul class="treeview-menu">
-							<li v-for="grandsonInfo in childInfo['child']"><a @click="addTab(grandsonInfo['id'],[rootUrl+grandsonInfo['uri']],grandsonInfo['name'])"><i :class="['fa fa-'+grandsonInfo['icon']]"></i> {{grandsonInfo['name']}}</a></li>
+							<li v-for="grandsonInfo in childInfo['child']"><a @click="addTab(grandsonInfo['eng_name'],[rootUrl+grandsonInfo['uri']],grandsonInfo['name'])"><i :class="['fa fa-'+grandsonInfo['icon']]"></i> {{grandsonInfo['name']}}</a></li>
 						</ul>
 					</li>
 					<!-- ./三级菜单 -->
@@ -96,7 +95,7 @@
 	</section>
 </aside><!-- /.侧边导航栏 -->
 
-<div class="modal modal-warning fade" id="logoutModal">
+<div class="modal modal-primary fade" id="logoutModal">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -107,8 +106,8 @@
 				<h3 style="line-height:38px;">确认要退出吗？</h3>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">&lt; 取消</button>
-				<a :href="[rootUrl+'logout']" class="btn btn-outline">确认登出 &gt;</a>
+				<button class="btn btn-outline pull-left" data-dismiss="modal">&lt; 取消</button>
+				<button class="btn btn-outline" @click="navbarLogout">确认登出 &gt;</a>
 			</div>
 		</div>
 		<!-- /.modal-content -->

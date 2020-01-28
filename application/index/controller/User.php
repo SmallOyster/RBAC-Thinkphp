@@ -4,13 +4,12 @@
  * @package Index
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-27
- * @version 2020-01-15
+ * @version 2020-01-23
  */
 
 namespace app\index\controller;
 
 use think\Session;
-use app\api\controller\User as ApiUser;
 
 class User
 {
@@ -18,5 +17,19 @@ class User
 	{
 		checkTabloadToken(inputGet('tabloadToken'),inputGet('tabId'));
 		return view('profile',['tabId'=>inputGet('tabId')]);
+	}
+	
+	
+	public function toUpdateProfile()
+	{
+		$data=inputPost('data',0,1);
+		
+		$query=model('User')
+			->allowField(
+				['phone','nick_name','email']
+			)
+			->save($data,['id'=>Session::get('userInfo.id')]);
+			
+		returnAjaxData(200,'success',[$query]);
 	}
 }

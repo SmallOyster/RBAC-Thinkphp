@@ -3,7 +3,7 @@
  * @name 生蚝科技RBAC框架(TP)-V-主框架
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-20
- * @version 2020-01-28
+ * @version 2020-01-29
  */
 ?>
 
@@ -37,14 +37,14 @@ var headerVm = new Vue({
 	data:{
 		rootUrl:"{:config('url_domain_root')}/",
 		apiPath:"{:URL('/api/','','',true)}",
-		//token:JWT.get(),
 		userId:"",
 		userInfo:{},
 		treeData:{},
 		allRoleInfo:{},
 		roleIdSelected:'',
 		contentMaxHeight:0,
-		tabloadToken:'{$tabloadToken}'
+		tabloadToken:'{$tabloadToken}',
+		sensOprToken:"{$sensOprToken}",
 	},
 	methods:{
 		getUserInfo:function(){
@@ -156,12 +156,12 @@ var headerVm = new Vue({
 			$(".tab-pane").attr('class','tab-pane');
 
 			// 再新增tabPanel
-			//lockScreen();
+			lockTabScreen(menuId);
 			$.ajax({
 				url:url,
 				data:{tabId:menuId,tabloadToken:headerVm.tabloadToken},
 				error:function(e){
-					unlockScreen();
+					unlockTabScreen(menuId);
 					
 					if(e.status==404){
 						alert("页面不存在！\n请联系管理员！");
@@ -174,7 +174,7 @@ var headerVm = new Vue({
 					}
 				},
 				success:function(ret){
-					unlockScreen();
+					unlockTabScreen(menuId);
 					$(".tab-content").append('<div class="tab-pane active" id="tabPanel-'+menuId+'" style="overflow-x:scroll;">'+ret+'</div>');
 					
 					if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)){

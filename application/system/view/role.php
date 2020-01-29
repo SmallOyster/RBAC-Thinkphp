@@ -3,7 +3,7 @@
  * @name 生蚝科技RBAC框架(TP)-V-角色列表
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-22
- * @version 2020-01-28
+ * @version 2020-01-29
  */
 ?>
 <style>
@@ -57,7 +57,7 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 	
-	<div class="modal fade" id="treeModal" data-backdrop="static" data-keyboard="false">
+	<div class="modal fade" id="treeModal_SystemRoleManage">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -170,7 +170,7 @@ var vm_SystemRoleManage = new Vue({
 			lockTabScreen('SystemRoleManage');
 			
 			$.ajax({
-				url:"./toOperate",
+				url:"{:url('toOperate')}",
 				type:'post',
 				data:{'type':this.operateType,'roleId':this.operateRoleId,data},
 				dataType:"json",
@@ -204,39 +204,6 @@ var vm_SystemRoleManage = new Vue({
 				}
 			})
 		},
-		getAllMenu:()=>{
-			lockTabScreen('SystemRoleManage');
-			
-			try{
-				$.fn.zTree.destroy();
-			}catch{
-
-			}
-
-			$.ajax({
-				url:headerVm.apiPath+"menu/getList",
-				data:{'isZtree':1},
-				dataType:"json",
-				async:false,
-				error:function(e){
-					console.log(e);
-					unlockTabScreen('SystemRoleManage');
-					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
-					return false;
-				},
-				success:function(ret){
-					vm_SystemRoleManage.treeNode=ret;
-					$.fn.zTree.init($("#tree_SystemRoleManage"),vm_SystemRoleManage.treeSetting,vm_SystemRoleManage.treeNode);
-					unlockTabScreen('SystemRoleManage');
-				}
-			});
-		},
-		setPermission_ready:function(id,name){
-			this.setPermissionRoleId=id;
-			this.setPermissionRoleName=name;
-
-			$("#treeModal").modal("show");
-		},
 		del_ready:function(id,name){
 			this.deleteId=id;
 			$("#delName_show").html(name);
@@ -246,7 +213,7 @@ var vm_SystemRoleManage = new Vue({
 			lockTabScreen('SystemRoleManage');
 
 			$.ajax({
-				url:"./toDelete",
+				url:"{:url('toDelete')}",
 				type:"post",
 				dataType:"json",
 				data:{"id":vm_SystemRoleManage.deleteId},
@@ -310,23 +277,18 @@ var vm_SystemRoleManage = new Vue({
 				}
 			});
 		},
-		getCheckedNodes:function(){
-			let ids="";
-			var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
-			nodes = zTree.getCheckedNodes();
+		getAllMenu:function(){
+			lockTabScreen('SystemRoleManage');
 			
-			for (i=0,l=nodes.length;i<l;i++){
-				ids+=nodes[i].id+",";
+			try{
+				$.fn.zTree.getZTreeObj("tree_SystemRoleManage").destroy();
+			}catch{
+
 			}
-			
-			ids=ids.substr(0,ids.length-1);
-			console.log(ids);
-			this.treeCheckNodeId=ids;
-		},
-		/*getAllMenu:function(){
+
 			$.ajax({
-				url:headerVm.apiPath+"role/getRoleMenuForZtree",
-				data:{'roleId':this.setPermissionRoleId},
+				url:headerVm.apiPath+"menu/getRoleMenuForZtree",
+				data:{"roleId":this.setPermissionRoleId},
 				dataType:"json",
 				async:false,
 				error:function(e){
@@ -336,20 +298,39 @@ var vm_SystemRoleManage = new Vue({
 					return false;
 				},
 				success:function(ret){
-					return ret;
+					vm_SystemRoleManage.treeNode=ret;
+					$.fn.zTree.init($("#tree_SystemRoleManage"),vm_SystemRoleManage.treeSetting,vm_SystemRoleManage.treeNode);
+					unlockTabScreen('SystemRoleManage');
 				}
 			});
-		},*/
+		},
+		setPermission_ready:function(id,name){
+			this.setPermissionRoleId=id;
+			this.setPermissionRoleName=name;
+			this.getAllMenu();
+			$("#treeModal_SystemRoleManage").modal("show");
+		},
+		getCheckedNodes:function(){
+			let ids=[];
+			let nodes = $.fn.zTree.getZTreeObj("tree_SystemRoleManage").getCheckedNodes();
+			
+			for (i=0,l=nodes.length;i<l;i++){
+				ids[i]=nodes[i].id;
+			}
+
+			this.treeCheckNodeId=ids;
+		},
 		setPermission_sure:function(){
-			lockTabScreen('SystemRoleManage');
+			this.getCheckedNodes();
 			roleId=this.setPermissionRoleId;
 			menuIds=this.treeCheckNodeId;
 
+			lockTabScreen('SystemRoleManage');
 			$.ajax({
-				url:"./toSetPermission",
+				url:"{:url('toSetPermission')}",
 				type:"post",
 				dataType:"json",
-				data:{'roleId':roleId,'menuIds':menuIds},
+				data:{'sensOprToken':headerVm.sensOprToken,'roleId':roleId,'menuIds':menuIds},
 				error:function(e){
 					console.log(e);
 					unlockTabScreen('SystemRoleManage');
@@ -363,6 +344,9 @@ var vm_SystemRoleManage = new Vue({
 					if(ret.code==200){
 						alert("权限分配成功！");
 						return true;
+					}else if(ret.tips!=""){
+						showModalTips(ret.tips);
+						return false;
 					}else if(ret.code==500){
 						showModalTips("权限分配数量不匹配！！<br>请联系管理员！");
 						return false;
@@ -383,7 +367,6 @@ var vm_SystemRoleManage = new Vue({
 	mounted:function(){
 		table_SystemRoleManage=$('#table_SystemRoleManage').DataTable({});
 		this.getList();
-		this.getAllMenu();
 	}
 });
 </script>

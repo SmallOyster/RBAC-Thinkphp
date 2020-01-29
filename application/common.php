@@ -1,8 +1,7 @@
 <?php
 // 应用公共文件
-
-use think\Jwt;
 use think\Session;
+
 
 function godie($type='',$message='',$tabId=''){
     if($type=='tab'){
@@ -29,53 +28,14 @@ function checkTabloadToken($token='',$tabId=''){
 }
 
 
-/**
- * 创建Jwt-Token
- * @param  array  $data 放在payload的数据
- * @return string       Jwt-Token
- * @author Jerry Cheung <master@xshgzs.com>
- * @since 2019-12-11
- * @version 2019-12-12
- */
-function generateToken($data=[]){
-	$token = Jwt::getInstance()
-		->setIss(sha1(getIP()))
-		->setExpire(7200);
-	
-	foreach ($data as $key => $value){
-		$token = $token->setClaim($key,$value);
+function checkSensOprToken($token=''){
+	$sessToken=Session::get('sensOprToken');
+
+	if($sessToken!=$token || $sessToken==null){
+		returnAjaxData(403002,'Invaild sensitive operation token',[],'接口令牌无效<br>请刷新页面重试');
+	}else{
+		return true;
 	}
-	
-	return (string)$token->encode();
-}
-
-
-/**
- * 验证Jwt-Token有效性（验签、验ISS使用者）
- * @param  string $token 欲验证的Jwt-Token
- * @return array         [验证结果布尔值,payload数据]
- * @author Jerry Cheung <master@xshgzs.com>
- * @since 2019-12-08
- * @version 2019-12-12
- */
-function validateToken($token=''){
-	$obj=Jwt::getInstance()
-		->setIss(sha1(getIP()))
-		->setToken($token);
-
-	$validate=$obj->validate();// 验证所有者
-	$verify=$obj->verify();// 验证签名有效性
-	
-	if($verify!==true || $validate!==true) return ['result'=>false];
-	
-	// 将payload数据转化为数组形式
-	$claimsObj=$obj->decode()->getClaims();
-	$claims=[];
-	foreach($claimsObj as $name=>$valueObj){
-		$claims[$name]=$valueObj->getValue();
-	}
-		
-	return ['result'=>true,'data'=>$claims];
 }
 
 

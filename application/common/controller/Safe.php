@@ -3,7 +3,7 @@
  * @name 生蚝科技RBAC框架(TP)-C-安全
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-11-21
- * @version 2020-01-11
+ * @version 2020-01-29
  */
 
 namespace app\common\controller;
@@ -29,17 +29,6 @@ class Safe
 				gotourl('login');
 				return false;
 			}
-		}
-	}
-	
-	
-	public function checkSensOprToken($token='')
-	{
-		$sessToken=Session::get('sensOprToken');
-		if($sessToken!=$token){
-			returnAjaxData(403002,'Invaild sensitive operation token',[],'接口令牌无效<br>请刷新页面重试');
-		}else{
-			return true;
 		}
 	}
 }

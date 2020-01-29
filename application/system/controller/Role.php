@@ -10,7 +10,6 @@
 namespace app\system\controller;
 
 use app\common\controller\Safe;
-use think\Session;
 
 class Role
 {	
@@ -36,7 +35,7 @@ class Role
 	}
 	
 	
-	public function operate()
+	public function toOperate()
 	{
 		$type=inputPost('type',0,1);
 		$roleId=inputPost('roleId',0,1);
@@ -58,14 +57,30 @@ class Role
 	}
 	
 	
-	public function delete()
+	public function toDelete()
 	{
-		$sensOprToken=inputPost('sensOprToken',0,1);
+		checkSensOprToken(inputPost('sensOprToken',0,1));
 		
 		$roleId=inputPost('roleId',0,1);
 		$query=model('Role')->delete([$roleId]);
 		
 		if($query==1) returnAjaxData(200,'success');
 		else returnAjaxData(500,'Failed to delete role: Database error',[],'删除角色失败');
+	}
+
+
+	public function toSetDefaultRole()
+	{
+		checkSensOprToken(inputPost('sensOprToken',0,1));
+
+		$roleId=inputPost('roleId',0,1);
+	}
+
+
+	public function toSetPermission()
+	{
+		checkSensOprToken(inputPost('sensOprToken',0,1));
+
+		$roleId=inputPost('roleId',0,1);
 	}
 }

@@ -4,13 +4,12 @@
  * @package System
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-27
- * @version 2020-01-11
+ * @version 2020-01-29
  */
 
 namespace app\system\controller;
 
 use app\common\controller\Safe;
-use think\Session;
 
 class User
 {
@@ -25,8 +24,7 @@ class User
 	{
 		checkTabloadToken(inputGet('tabloadToken'),inputGet('tabId',1));
 		
-		$sensOprToken=sha1(time().makeUUID());
-		return view('/user',['tabId'=>inputGet('tabId'),'sensOprToken'=>$sensOprToken]);
+		return view('/user',['tabId'=>inputGet('tabId')]);
 	}
 	
 	

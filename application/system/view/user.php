@@ -4,7 +4,7 @@
  * @package System/User
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-27
- * @version 2020-01-28
+ * @version 2020-01-29
  */
 ?>
 
@@ -88,7 +88,6 @@ var table_SystemUserManage;
 var vm_SystemUserManage = new Vue({
 	el:'#tabVue_SystemUserManage',
 	data:{
-		sensOprToken:"{$sensOprToken}",
 		updateId:0,
 		statusNum:1,
 		resetId:0,
@@ -250,7 +249,7 @@ var vm_SystemUserManage = new Vue({
 				url:"{:url('delete')}",
 				type:"post",
 				dataType:"json",
-				data:{"sensOprToken":this.sensOprToken,"userId":this.deleteId},
+				data:{"sensOprToken":headerVm.sensOprToken,"userId":this.deleteId},
 				error:function(e){
 					console.log(e);
 					unlockTabScreen('SystemUserManage');

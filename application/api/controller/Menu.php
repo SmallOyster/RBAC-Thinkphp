@@ -4,7 +4,7 @@
  * @package Api
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-11-03
- * @version 2020-01-01
+ * @version 2020-01-29
  */
 
 namespace app\api\controller;
@@ -17,12 +17,7 @@ class Menu
 {
 	public function getCurrentUserMenu()
 	{
-		$roleId=Session::get('currentRoleId');
-
-		if($roleId==''){
-			returnAjaxData(40301,'User not login');
-		}
-
+		$roleId=Session::has('currentRoleId')?Session::get('currentRoleId'):returnAjaxData(40301,'User not login');
 		$obj_Rbac=new Rbac();
 		returnAjaxData(200,'success',['treeData'=>$obj_Rbac->getAllMenuByRole($roleId)]);
 	}
@@ -73,14 +68,14 @@ class Menu
 		}
 
 		foreach($menuList as $key=>$info){
-			$rtn[$key]['id']=(int)$info['id'];
-			$rtn[$key]['pId']=(int)$info['father_id'];
+			$rtn[$key]['id']=$info['id'];
+			$rtn[$key]['pId']=$info['father_id'];
 			$rtn[$key]['menuIcon']=$info['icon'];
 			$rtn[$key]['menuName']=$info['name'];
 			$rtn[$key]['uri']=$info['uri'];
 			$rtn[$key]['type']=$info['type'];
 			$rtn[$key]['name']=$info['type']==1?urlencode($info['name']):($info['type']==2?'(按钮)'.urlencode($info['name']):'(接口)'.urlencode($info['name']));
-			if(in_array($info['id'],$allPermission)) $rtn[$key]['checked']=true;
+			$rtn[$key]['checked']=in_array($info['id'],$allPermission)?true:false;
 		}
 
 		die(urldecode(json_encode($rtn)));

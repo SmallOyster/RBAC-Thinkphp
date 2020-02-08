@@ -3,7 +3,7 @@
  * @name 生蚝科技RBAC框架(TP)-V-角色列表
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-22
- * @version 2020-01-29
+ * @version 2020-01-30
  */
 ?>
 <style>
@@ -13,23 +13,23 @@
 
 <!-- Vue main -->
 <div id="tabVue_SystemRoleManage">
-		<a @click='operateReady(1)' class="btn btn-primary btn-block">新 增 角 色</a>
+	<a @click='operateReady(1)' class="btn btn-primary btn-block">新 增 角 色</a>
 
-		<hr>
+	<hr>
 
-		<div class="panel panel-default">
-			<div class="panel-body">
-				<table id="table_SystemRoleManage" class="table table-striped table-bordered table-hover" style="border-radius: 5px; border-collapse: separate;">
-					<thead>
-						<tr>
-							<th>角色名称</th>
-							<th>操作</th>
-						</tr>
-					</thead>
-					<tbody></tbody>
-				</table>
-			</div>
+	<div id="panel_SystemRoleManage" class="panel panel-default">
+		<div class="panel-body">
+			<table id="table_SystemRoleManage" class="table table-striped table-bordered table-hover" style="border-radius: 5px; border-collapse: separate;">
+				<thead>
+					<tr>
+						<th>角色名称</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
 		</div>
+	</div>
 
 	<div class="modal fade" id="operateModal_SystemRoleManage" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog">
@@ -68,7 +68,7 @@
 					<ul id="tree_SystemRoleManage" class="ztree"></ul>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-warning" onclick="vm_SystemRoleManage.setPermissionRoleId=0;vm_SystemRoleManage.setPermissionRoleName='';$('#treeModal').modal('hide');">&lt; 返回</button> <button class="btn btn-success" @click='setPermission_sure'>确认分配权限 &gt;</button>
+					<button class="btn btn-warning" onclick="vm_SystemRoleManage.setPermissionRoleId=0;vm_SystemRoleManage.setPermissionRoleName='';$('#treeModal_SystemRoleManage').modal('hide');">&lt; 返回</button> <button class="btn btn-success" @click='setPermission_sure'>确认分配权限 &gt;</button>
 				</div>
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
@@ -124,8 +124,7 @@ var vm_SystemRoleManage = new Vue({
 							let operateHtml=''
 							               +"<a onclick='vm_SystemRoleManage.operateReady(2,"+'"'+list[i]['id']+'","'+list[i]['name']+'","'+list[i]['remark']+'"'+")' class='btn btn-info'>编辑</a> "
 							               +"<a onclick='vm_SystemRoleManage.del_ready("+'"'+list[i]['id']+'","'+list[i]['name']+'"'+")' class='btn btn-danger'>删除</a> "
-							               +"<a onclick='vm_SystemRoleManage.setPermission_ready("+'"'+list[i]['id']+'","'+list[i]['name']+'"'+")' class='btn btn-success'>分配权限</a> "
-							               +'<a href="'+headerVm.rootUrl+'admin/role/setPermission?id='+list[i]['id']+'&name='+list[i]['name']+'" class="btn btn-success">分配权限(旧)</a> ';
+							               +"<a onclick='vm_SystemRoleManage.setPermission_ready("+'"'+list[i]['id']+'","'+list[i]['name']+'"'+")' class='btn btn-success'>分配权限</a> ";
 
 							operateHtml=list[i]['is_default']!=0?operateHtml:operateHtml+"<a onclick='vm_SystemRoleManage.setDefaultRole("+'"'+list[i]['id']+'"'+")' class='btn btn-primary'>设为默认角色</a> ";
 
@@ -135,6 +134,8 @@ var vm_SystemRoleManage = new Vue({
 							}).draw();
 						}
 					}
+
+					$("#panel_SystemRoleManage").width($("#table_SystemRoleManage").width()+30);
 				}
 			})
 		},
@@ -181,13 +182,16 @@ var vm_SystemRoleManage = new Vue({
 					return false;				
 				},
 				success:ret=>{
-					$("#operateModal").modal('hide');
+					$("#operateModal_SystemRoleManage").modal('hide');
 					unlockTabScreen('SystemRoleManage');
 
 					if(ret.code==200){
-						alert("操作成功！");
+						showModalTips("操作成功！");
 						vm_SystemRoleManage.getList();
 						return;
+					}else if(ret.tips!=""){
+						showModalTips(ret.tips);
+						return false;
 					}else if(ret.code==4001){
 						showModalTips("数据包含非法字段！<hr>请联系技术支持<br>并提交以下错误码：AU4001-"+ret.data);
 						return;
@@ -207,33 +211,33 @@ var vm_SystemRoleManage = new Vue({
 		del_ready:function(id,name){
 			this.deleteId=id;
 			$("#delName_show").html(name);
-			$("#delModal").modal('show');
+			$("#delModal_SystemRoleManage").modal('show');
 		},
-		del_sure:()=>{
+		del_sure:function(){
 			lockTabScreen('SystemRoleManage');
 
 			$.ajax({
 				url:"{:url('toDelete')}",
 				type:"post",
 				dataType:"json",
-				data:{"id":vm_SystemRoleManage.deleteId},
+				data:{'sensOprToken':headerVm.sensOprToken,"id":this.deleteId},
 				error:function(e){
 					console.log(e);
 					unlockTabScreen('SystemRoleManage');
-					$("#delModal").modal('hide');
+					$("#delModal_SystemRoleManage").modal('hide');
 					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 					return false;
 				},
 				success:function(ret){
 					unlockTabScreen('SystemRoleManage');
-					$("#delModal").modal('hide');
+					$("#delModal_SystemRoleManage").modal('hide');
 
 					if(ret.code==200){
-						alert("删除成功！");
+						showModalTips("删除成功！");
 						vm_SystemRoleManage.getList();
 						return true;
-					}else if(ret.code==1){
-						showModalTips("删除失败！！！");
+					}else if(ret.tips!=""){
+						showModalTips(ret.tips);
 						return false;
 					}else{
 						showModalTips("系统错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+ret.code+"</font>");
@@ -246,14 +250,13 @@ var vm_SystemRoleManage = new Vue({
 			lockTabScreen('SystemRoleManage');
 
 			$.ajax({
-				url:"./toSetDefaultRole",
+				url:"{:url('toSetDefaultRole')}",
 				type:"post",
 				dataType:"json",
-				data:{"id":id},
+				data:{'sensOprToken':headerVm.sensOprToken,"roleId":id},
 				error:function(e){
 					console.log(e);
 					unlockTabScreen('SystemRoleManage');
-					$("#delModal").modal('hide');
 					showModalTips("服务器错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+e.status+"</font>");
 					return false;
 				},
@@ -261,7 +264,7 @@ var vm_SystemRoleManage = new Vue({
 					unlockTabScreen('SystemRoleManage');
 
 					if(ret.code==200){
-						alert("设置成功！");
+						showModalTips("设置成功！");
 						vm_SystemRoleManage.getList();
 						return true;
 					}else if(ret.code==1){
@@ -323,6 +326,7 @@ var vm_SystemRoleManage = new Vue({
 		setPermission_sure:function(){
 			this.getCheckedNodes();
 			roleId=this.setPermissionRoleId;
+			roleName=this.setPermissionRoleName;
 			menuIds=this.treeCheckNodeId;
 
 			lockTabScreen('SystemRoleManage');
@@ -339,22 +343,13 @@ var vm_SystemRoleManage = new Vue({
 				},
 				success:function(ret){
 					unlockTabScreen('SystemRoleManage');
-					$("#treeModal").modal("hide");
+					$("#treeModal_SystemRoleManage").modal("hide");
 
 					if(ret.code==200){
-						alert("权限分配成功！");
+						showModalTips("成功给["+roleName+"]分配"+ret.data['totalPermission']+"项权限");
 						return true;
 					}else if(ret.tips!=""){
 						showModalTips(ret.tips);
-						return false;
-					}else if(ret.code==500){
-						showModalTips("权限分配数量不匹配！！<br>请联系管理员！");
-						return false;
-					}else if(ret.code==1){
-						showModalTips("权限清空失败！！<br>请联系管理员！");
-						return false;
-					}else if(ret.code==0){
-						showModalTips("参数缺失！请联系技术支持！");
 						return false;
 					}else{
 						showModalTips("系统错误！<hr>请联系技术支持并提交以下错误码：<br><font color='blue'>"+ret.code+"</font>");
@@ -365,13 +360,18 @@ var vm_SystemRoleManage = new Vue({
 		}
 	},
 	mounted:function(){
-		table_SystemRoleManage=$('#table_SystemRoleManage').DataTable({});
+		table_SystemRoleManage=$('#table_SystemRoleManage').DataTable({
+			"columnDefs":[{
+				"targets":[1],
+				"orderable": false
+			}]
+		});
 		this.getList();
 	}
 });
 </script>
 
-<div class="modal fade" id="delModal">
+<div class="modal fade" id="delModal_SystemRoleManage">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">

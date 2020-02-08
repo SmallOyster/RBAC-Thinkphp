@@ -61,7 +61,7 @@
 
 			<hr>
 
-			<button class="btn btn-primary" style="width:48%" onclick="headerVm.removeTab('{$tabId}');headerVm.changeTab(0);">&lt; 取 消 操 作</button> <button class="btn btn-success" style="width:48%" @click="updateUserInfo">确 认 修 改 &gt;</button>
+			<button class="btn btn-primary" style="width:49%" onclick="headerVm.removeTab('{$tabId}');headerVm.changeTab(0);">&lt; 取 消 操 作</button> <button class="btn btn-success" style="width:49%" @click="updateUserInfo">确 认 修 改 &gt;</button>
 
 		</div>
 	</div>

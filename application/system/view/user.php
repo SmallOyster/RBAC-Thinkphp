@@ -4,7 +4,7 @@
  * @package System/User
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-27
- * @version 2020-01-29
+ * @version 2020-01-30
  */
 ?>
 
@@ -147,16 +147,17 @@ var vm_SystemUserManage = new Vue({
 				}
 			})
 		},
-		operateReady:(type=1,userId=0,userName='',nickName='',phone='',email='',roleIds='')=>{
-			vm_SystemUserManage.operateType=type;
-			vm_SystemUserManage.operateUserId=userId;
-			vm_SystemUserManage.operateInputData={
+		operateReady:function(type=1,userId=0,userName='',nickName='',phone='',email='',roleIds=''){
+			this.operateType=type;
+			this.operateUserId=userId;
+			this.operateOriginData={
 				userName:userName,
 				nickName:nickName,
 				phone:phone,
-				email:email
+				email:email,
+				roleIds:roleIds
 			};
-			vm_SystemUserManage.operateOriginData={
+			this.operateInputData={
 				userName:userName,
 				nickName:nickName,
 				phone:phone,
@@ -165,14 +166,14 @@ var vm_SystemUserManage = new Vue({
 			};
 			
 			if(type==1){
-				vm_SystemUserManage.operateModalTitle="新 增 用 户";
-				vm_SystemUserManage.operateModalBtn="确 认 新 增 用 户 >";
+				this.operateModalTitle="新 增 用 户";
+				this.operateModalBtn="确 认 新 增 用 户 >";
 			}else if(type==2){
-				vm_SystemUserManage.operateModalTitle="编 辑 用 户";
-				vm_SystemUserManage.operateModalBtn="确 认 编 辑 用 户 >";
+				this.operateModalTitle="编 辑 用 户";
+				this.operateModalBtn="确 认 编 辑 用 户 >";
 			}
 
-			vm_SystemUserManage.getAllRole(roleIds.split(","));
+			this.getAllRole(roleIds.split(","));
 			$("#operateModal_SystemUserManage").modal("show");
 		},
 		operateSure:function(){
@@ -181,25 +182,25 @@ var vm_SystemUserManage = new Vue({
 			let type=this.operateType;
 
 			// 检查是否有修改数据
-			if(vm_SystemUserManage.operateInputData.userName!==vm_SystemUserManage.operateOriginData.userName) userData.user_name=vm_SystemUserManage.operateInputData.userName;
-			if(vm_SystemUserManage.operateInputData.nickName!==vm_SystemUserManage.operateOriginData.nickName) userData.nick_name=vm_SystemUserManage.operateInputData.nickName;
-			if(vm_SystemUserManage.operateInputData.phone!==vm_SystemUserManage.operateOriginData.phone) userData.phone=vm_SystemUserManage.operateInputData.phone;
-			if(vm_SystemUserManage.operateInputData.email!==vm_SystemUserManage.operateOriginData.email) userData.email=vm_SystemUserManage.operateInputData.email;
-			if(roleIds.join(',')!==vm_SystemUserManage.operateOriginData.roleIds) userData.role_id=roleIds;
+			if(this.operateInputData.userName!==this.operateOriginData.userName) userData.user_name=this.operateInputData.userName;
+			if(this.operateInputData.nickName!==this.operateOriginData.nickName) userData.nick_name=this.operateInputData.nickName;
+			if(this.operateInputData.phone!==this.operateOriginData.phone) userData.phone=this.operateInputData.phone;
+			if(this.operateInputData.email!==this.operateOriginData.email) userData.email=this.operateInputData.email;
+			if(roleIds.join(',')!==this.operateOriginData.roleIds) userData.role_id=roleIds;
 			
 			if($.isEmptyObject(userData)==true){
 				showModalTips('请填写需要操作的数据！');
-				vm_SystemUserManage.operateInputData={};
-				vm_SystemUserManage.operateType=-1;
-				vm_SystemUserManage.operateUserId=0;
-				$('#operateModal').modal('hide');
+				this.operateInputData={};
+				this.operateType=-1;
+				this.operateUserId=0;
+				$('#operateModal_SystemUserManage').modal('hide');
 				return false;
 			}
 			
 			lockTabScreen('SystemUserManage');
 
 			$.ajax({
-				url:"{:url('system/user/toOperate')}",
+				url:"{:url('toOperate')}",
 				type:'post',
 				data:{'type':type,'userId':this.operateUserId,userData},
 				dataType:"json",
@@ -210,7 +211,7 @@ var vm_SystemUserManage = new Vue({
 					return false;
 				},
 				success:ret=>{
-					$("#operateModal").modal('hide');
+					$("#operateModal_SystemUserManage").modal('hide');
 					unlockTabScreen('SystemUserManage');
 
 					if(ret.code==200){
@@ -279,7 +280,7 @@ var vm_SystemUserManage = new Vue({
 			lockTabScreen('SystemUserManage');
 
 			// 是否已经获取过所有角色
-			if(JSON.stringify(vm_SystemUserManage.roleList)=="{}"){
+			if(JSON.stringify(this.roleList)=="{}"){
 				$.ajax({
 					url:headerVm.apiPath+"role/getList",
 					dataType:'json',
@@ -315,7 +316,7 @@ var vm_SystemUserManage = new Vue({
 					}
 				});
 			}else{
-				let roleList=vm_SystemUserManage.roleList;
+				let roleList=this.roleList;
 				let list=[];
 
 				for(i in roleList){
@@ -326,7 +327,7 @@ var vm_SystemUserManage = new Vue({
 				}
 
 				// 去重
-				vm_SystemUserManage.operateUserRoleIds=list.filter((item, index, self) => self.indexOf(item) === index)
+				this.operateUserRoleIds=list.filter((item, index, self) => self.indexOf(item) === index)
 				unlockTabScreen('SystemUserManage');
 			}
 		},
@@ -354,8 +355,8 @@ var vm_SystemUserManage = new Vue({
 			})
 		},
 		chooseRole:function(){
-			vm_SystemUserManage.chooseItemModalName="请选择["+vm_SystemUserManage.nickName+"]的角色";
-			vm_SystemUserManage.$refs.chooseItemModal.show();
+			this.chooseItemModalName="请选择["+this.nickName+"]的角色";
+			this.$refs.chooseItemModal.show();
 		}
 	},
 	mounted:function(){

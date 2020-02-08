@@ -3,7 +3,7 @@
  * @name 生蚝科技RBAC框架(TP)-V-登录
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-12-29
- * @version 2020-01-27
+ * @version 2020-02-06
  */
 ?>
 
@@ -109,7 +109,7 @@ window.onload=function(){
 	}
 	/********** ▲ 记住密码 ▲ **********/
 	
-	sessionStorage.removeItem("allRoleInfo");
+	localStorage.removeItem("allRoleInfo");
 }
 
 function toLogin(){
@@ -167,7 +167,7 @@ function toLogin(){
 			$("#password").removeAttr("disabled");
 
 			if(ret.code==200){
-				sessionStorage.setItem('allRoleInfo',ret.data['roleInfo']);
+				localStorage.setItem('allRoleInfo',ret.data['roleInfo']);
 
 				// 如果有重定向地址且base64有效
 				if(getURLParam("redirect")!=null){

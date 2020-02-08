@@ -4,7 +4,7 @@
  * @package System
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-11-02
- * @version 2020-01-11
+ * @version 2020-01-30
  */
 
 namespace app\system\controller;
@@ -39,7 +39,7 @@ class Role
 	{
 		$type=inputPost('type',0,1);
 		$roleId=inputPost('roleId',0,1);
-		$roleData=inputPost('roleData',0,1);
+		$roleData=inputPost('data',0,1);
 		
 		if($type==2){
 			$query=model('Role')
@@ -82,5 +82,28 @@ class Role
 		checkSensOprToken(inputPost('sensOprToken',0,1));
 
 		$roleId=inputPost('roleId',0,1);
+		$menuIds=inputPost('menuIds',0,1);
+
+		$roleInfo=model('Role')->find($roleId);
+		if(count($roleInfo)<1) returnAjaxData(4001,'Role not found',[],'角色信息不存在');
+
+		// 先清空原有权限
+		model('RolePermission')->destroy(['role_id'=>$roleId]);
+
+		// 组合成一个二维数组
+		$list=[];
+		foreach($menuIds as $menuId){
+			array_push($list,['role_id'=>$roleId,'menu_id'=>$menuId]);
+		}
+
+		// 插入
+		$query=model('RolePermission')->saveAll($list);
+
+		$totalPermission=count($query);
+		$shouldPermission=count($menuIds);
+
+		if($totalPermission==$shouldPermission) returnAjaxData(200,'success',['totalPermission'=>count($query)]);
+		elseif($totalPermission>=1) returnAjaxData(4002,'Failed to match permission number when insert role permission',['totalPermission'=>$totalPermission,'shouldPermission'=>$shouldPermission],'权限分配数量不匹配<hr>已选权限数：'.$shouldPermission.'<br>成功分配权限数：'.$totalPermission);
+		else returnAjaxData(500,'Failed to set role permission: database error',[],'数据库错误<br>分配权限失败');
 	}
 }

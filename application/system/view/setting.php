@@ -4,7 +4,7 @@
  * @package System/Setting
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-25
- * @version 2020-01-28
+ * @version 2020-02-07
  */
 ?>
 
@@ -92,10 +92,10 @@ var vm_SystemSetting = new Vue({
 
 						for(i in list){							
 							let operateHtml=''
-							               +"<a onclick='vm_SystemSetting.edit_ready("+'"'+list[i]['name']+'","'+list[i]['chinese_name']+'","'+list[i]['value']+'"'+")' class='btn btn-warning'>编辑</a>";
+							               +"<a onclick='vm_SystemSetting.edit_ready("+'"'+list[i]['key']+'","'+list[i]['name']+'","'+list[i]['value']+'"'+")' class='btn btn-warning'>编辑</a>";
 
 							table_SystemSetting.row.add({
-								0: list[i]['chinese_name'],
+								0: list[i]['name'],
 								1: list[i]['value'],
 								2: operateHtml
 							}).draw();

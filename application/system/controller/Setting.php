@@ -4,7 +4,7 @@
  * @package System
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-20
- * @version 2019-10-27
+ * @version 2020-02-07
  */
 
 namespace app\system\controller;
@@ -38,10 +38,10 @@ class Setting
 		$chineseName=inputPost('chineseName',0,1);
 		$value=inputPost('value',0,1);
 		
-		$query=Db::name('setting')->where('name',$name)
-			->update(['chinese_name'=>$chineseName,'value'=>$value]);
+		$query=Db::name('setting')->where('key',$name)
+			->update(['name'=>$chineseName,'value'=>$value]);
 			
-			if($query==1) returnAjaxData(200,'success');
-			else returnAjaxData(500,'Database error',[],'配置已被删除或为无效的值！');
+		if($query==1) returnAjaxData(200,'success');
+		else returnAjaxData(500,'Database error',[],'配置已被删除或为无效的值！');
 	}
 }

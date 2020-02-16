@@ -1,21 +1,22 @@
 <?php 
 /**
  * @name 生蚝科技RBAC框架(TP)-V-角色列表
+ * @package System/Role
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-22
- * @version 2020-01-30
+ * @version 2020-02-08
  */
 ?>
 <style>
 	.ztree li span.button.add {margin-left:2px; margin-right: -1px; background-position:-144px 0; vertical-align:top; *vertical-align:middle}
-	ul.ztree {margin-top: 10px;border: 1px solid #617775;height:360px;overflow-y:scroll;overflow-x:auto;}
+	ul.ztree {margin-top: 10px;border: 1px solid #617775;background: #f0f6e4;height:360px;overflow-y:scroll;overflow-x:auto;}
 </style>
 
 <!-- Vue main -->
 <div id="tabVue_SystemRoleManage">
 	<a @click='operateReady(1)' class="btn btn-primary btn-block">新 增 角 色</a>
 
-	<hr>
+	<br>
 
 	<div id="panel_SystemRoleManage" class="panel panel-default">
 		<div class="panel-body">

@@ -3,7 +3,7 @@
  * @name 生蚝科技RBAC框架(TP)-V-主框架
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-20
- * @version 2020-02-06
+ * @version 2020-02-08
  */
 ?>
 
@@ -51,7 +51,7 @@ var headerVm = new Vue({
 			lockScreen();
 
 			$.ajax({
-				url:headerVm.apiPath+"user/getCurrentUserInfo",
+				url:this.apiPath+"user/getCurrentUserInfo",
 				dataType:"json",
 				error:function(e){
 					unlockScreen();
@@ -77,7 +77,7 @@ var headerVm = new Vue({
 			lockScreen();
 
 			$.ajax({
-				url:headerVm.apiPath+"menu/getCurrentUserMenu",
+				url:this.apiPath+"menu/getCurrentUserMenu",
 				dataType:"json",
 				error:function(e){
 					unlockScreen();
@@ -113,10 +113,10 @@ var headerVm = new Vue({
 		changeRole:function(){
 			roleId=$("#roleList").val();
 
-			if(roleId=='' || roleId==headerVm.userInfo['roleId']) return;
+			if(roleId=='' || roleId==this.userInfo['roleId']) return;
 
 			$.ajax({
-				url:headerVm.rootUrl+"toChangeRole",
+				url:this.rootUrl+"toChangeRole",
 				type:"post",
 				data:{"roleId":roleId},
 				dataType:"json",
@@ -133,12 +133,12 @@ var headerVm = new Vue({
 				}
 			});
 		},
-		addTab:(menuId,url,name)=>{
+		addTab:function(menuId,url,name){
 			menuId=menuId.replace(/-/g,"");
 
 			// 判断是否已经打开
 			if($("#tab-"+menuId).length>0){
-				headerVm.changeTab(menuId);
+				this.changeTab(menuId);
 				return true;
 			}
 
@@ -159,7 +159,7 @@ var headerVm = new Vue({
 			lockTabScreen(menuId);
 			$.ajax({
 				url:url,
-				data:{tabId:menuId,tabloadToken:headerVm.tabloadToken},
+				data:{tabId:menuId,tabloadToken:this.tabloadToken},
 				error:function(e){
 					unlockTabScreen(menuId);
 					
@@ -177,29 +177,44 @@ var headerVm = new Vue({
 					unlockTabScreen(menuId);
 					$(".tab-content").append('<div class="tab-pane active" id="tabPanel-'+menuId+'" style="overflow-x:scroll;">'+ret+'</div>');
 					
+					// 手机端适配
 					if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)){
-						height=document.body.clientHeight;
-						height=window.screen.availWidth;
-						$("#tabPanel-"+menuId).height(height);
+						height=window.screen.height;
+						// 防止导航栏过多而变多层
+						navHeight=$(".nav-tabs").height();
+						$("#tabPanel-"+menuId).height(height-145-navHeight);
 					}
 				}
 			})
 		},
-		changeTab:(id)=>{
+		changeTab:function(id){
 			$(".nav-tabs li").attr('class','');
 			$("#tab-"+id).parent().attr('class','active');
 
 			$(".tab-pane").attr('class','tab-pane');
 			$("#tabPanel-"+id).attr('class','tab-pane active');
+
+			// 手机端适配
+			if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)){
+				height=window.screen.height;
+				// 防止导航栏过多而变多层
+				navHeight=$(".nav-tabs").height();
+				$("#tabPanel-"+id).height(height-145-navHeight);
+			}
 		},
-		removeTab:(id)=>{
+		removeTab:function(id){
 			$("#tab-"+id).parent().remove();
 			$("#tabPanel-"+id).remove();
 		},
-		navbarLogout:()=>{
+		navbarLogout:function(){
+			logoutUrl=this.rootUrl+"logout";
 			localStorage.removeItem('allRoleInfo');
 			showModalTips('您已安全登出系统！');
-			window.location.href=headerVm.rootUrl+"logout";
+
+			setTimeout(function(){
+				window.location.href=logoutUrl;
+			},600);
+			
 			return true;
 		}
 	}
@@ -243,7 +258,7 @@ headerVm.getMenuTree();
 				<h3 class="modal-title" id="tipsTitle">温馨提示</h3>
 			</div>
 			<div class="modal-body">
-				<font color="#fb7312" style="font-weight:bold;font-size:24px;text-align:center;">
+				<font color="#fb7312" style="font-weight:bold;font-size:23px;text-align:center;">
 					<p id="tips"></p>
 				</font>
 			</div>

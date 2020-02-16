@@ -19,7 +19,7 @@ return [
     // 应用Trace
     'app_trace'              => false,
     // 应用模式状态
-    'app_status'             => '',
+    'app_status'             => 'develop',
     // 是否支持多模块
     'app_multi_module'       => true,
     // 入口自动绑定模块
@@ -172,7 +172,7 @@ return [
         // 日志保存目录
         'path'  => LOG_PATH,
         // 日志记录级别
-        'level' => [],
+        'level' => ['error','sql','alert'],
     ],
 
     // +----------------------------------------------------------------------
@@ -195,7 +195,7 @@ return [
         // 缓存前缀
         'prefix' => '',
         // 缓存有效期 0表示永久缓存
-        'expire' => 0,
+        'expire' => 1,
     ],
 
     // +----------------------------------------------------------------------
@@ -221,13 +221,13 @@ return [
         // cookie 名称前缀
         'prefix'    => '',
         // cookie 保存时间
-        'expire'    => 0,
+        'expire'    => 7200,
         // cookie 保存路径
         'path'      => '/',
         // cookie 有效域名
         'domain'    => '',
         //  cookie 启用安全传输
-        'secure'    => false,
+        'secure'    => true,
         // httponly设置
         'httponly'  => '',
         // 是否使用 setcookie

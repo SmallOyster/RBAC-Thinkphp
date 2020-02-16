@@ -207,4 +207,3 @@ function getIP()
 	}
 	return $cip;
 }
-

@@ -4,7 +4,7 @@
  * @package Index
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-27
- * @version 2020-01-23
+ * @version 2020-02-08
  */
 
 namespace app\index\controller;
@@ -23,10 +23,12 @@ class User
 	public function toUpdateProfile()
 	{
 		$data=inputPost('data',0,1);
+
+		$data['update_time']=date('Y-m-d H:i:s');
 		
 		$query=model('User')
 			->allowField(
-				['phone','nick_name','email']
+				['phone','nick_name','email','update_time']
 			)
 			->save($data,['id'=>Session::get('userInfo.id')]);
 			

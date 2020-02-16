@@ -1,10 +1,10 @@
 <?php
 /**
- * @name 生蚝科技RBAC框架(TP)-V-系统配置
+ * @key 生蚝科技RBAC框架(TP)-V-系统配置
  * @package System/Setting
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-10-25
- * @version 2020-02-07
+ * @version 2020-02-08
  */
 ?>
 
@@ -32,25 +32,25 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-					<h3 class="modal-title">{{chineseName}}-系统参数修改</h3>
+					<h3 class="modal-title">{{name}}-系统参数修改</h3>
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-						<label for="name">键名</label>
-						<input class="form-control" v-model="name" disabled>
+						<label>键名</label>
+						<input class="form-control" v-model="key" disabled>
 					</div>
 					<div class="form-group">
 						<label for="name">中文描述</label>
-						<input class="form-control" v-model="chineseName">
+						<input class="form-control" v-model="name">
 					</div>
 					<div class="form-group">
-						<label for="name">值</label>
+						<label for="value">值</label>
 						<input class="form-control" v-model="value">
 						<p class="help-block">Tips</p>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-primary" onclick="$('#editModal_SystemSetting').modal('hide');">&lt; 返回</button> <button class="btn btn-warning" @click='edit_sure'>确认编辑 &gt;</button>
+					<button class="btn btn-primary" data-dismiss="modal">&lt; 返回</button> <button class="btn btn-warning" @click='edit_sure'>确认编辑 &gt;</button>
 				</div>
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
@@ -64,9 +64,9 @@ var table_SystemSetting;
 var vm_SystemSetting = new Vue({
 	el:'#tabVue_SystemSetting',
 	data:{
-		name:"",
+		key:"",
 		oldChineseName:"",
-		chineseName:"",
+		name:"",
 		oldValue:"",
 		value:""
 	},
@@ -107,16 +107,16 @@ var vm_SystemSetting = new Vue({
 				}
 			})
 		},
-		edit_ready:(name,chineseName,value)=>{
-			vm_SystemSetting.oldChineseName=chineseName;
+		edit_ready:(key,name,value)=>{
+			vm_SystemSetting.oldChineseName=name;
 			vm_SystemSetting.oldValue=value;
+			vm_SystemSetting.key=key;
 			vm_SystemSetting.name=name;
-			vm_SystemSetting.chineseName=chineseName;
 			vm_SystemSetting.value=value;
 			$("#editModal_SystemSetting").modal('show');
 		},
 		edit_sure:()=>{			
-			if(vm_SystemSetting.chineseName==vm_SystemSetting.oldChineseName && vm_SystemSetting.value==vm_SystemSetting.oldValue){
+			if(vm_SystemSetting.name==vm_SystemSetting.oldChineseName && vm_SystemSetting.value==vm_SystemSetting.oldValue){
 				showModalTips("请编辑您所要修改的数据！");
 				return false;
 			}
@@ -125,7 +125,7 @@ var vm_SystemSetting = new Vue({
 			$.ajax({
 				url:"{:URL('system/setting/save')}",
 				type:"post",
-				data:{"name":vm_SystemSetting.name,"chineseName":vm_SystemSetting.chineseName,"value":vm_SystemSetting.value},
+				data:{"key":vm_SystemSetting.key,"name":vm_SystemSetting.name,"value":vm_SystemSetting.value},
 				dataType:'json',
 				error:function(e){
 					unlockTabScreen('SystemSetting');

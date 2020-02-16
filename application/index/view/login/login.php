@@ -168,7 +168,7 @@ function toLogin(){
 
 			if(ret.code==200){
 				localStorage.setItem('allRoleInfo',ret.data['roleInfo']);
-
+				
 				// 如果有重定向地址且base64有效
 				if(getURLParam("redirect")!=null){
 					try {

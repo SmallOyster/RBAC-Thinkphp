@@ -4,7 +4,7 @@
  * @package System/Menu
  * @author Jerry Cheung <master@xshgzs.com>
  * @since 2019-11-01
- * @version 2020-01-28
+ * @version 2020-02-08
  */
 ?>
 <style>
@@ -218,7 +218,7 @@ var vm_SystemMenuManage = new Vue({
 		},
 		deleteReady:function(id,name){
 			this.deleteId=id;
-			$("#delName_show").html(id+". "+name);
+			$("#delName_show").html(name);
 			$("#delModal").modal('show');
 		},
 		deleteSure:()=>{
